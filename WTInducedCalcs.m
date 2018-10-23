@@ -1,13 +1,13 @@
-function [a, adash, phi_flow, Cn, Ct,curr_tol, i] = WTInducedCalcs(a, adash, V0, omega, y, theta, Chord, B)
+function [a_out, adash_out, phi_flow, Cn, Ct,curr_tol, i] = WTInducedCalcs(a, adash, V0, omega, y, theta, Chord, B)
 %1: SINGLE ELEMENT: use an iterative solution to find the values of a,
 %adash, phi, Cn and Ct at a particular radius.
 
 %Convergence Settings
-etol=0.0001;
+etol=0.000001;
 curr_tol=1;
 solfnd=false;
 
-solidity=(B*Chord)/(pi*y);
+solidity=(B*Chord)/(2*pi*y);
  
 %init and adash from function input.
 a_in=a;
@@ -27,8 +27,8 @@ adash_in=adash;
         %Test for convergance
         curr_tol=abs(a_out-a_in)+abs(adash_out-adash_in);
         if curr_tol>etol
-            a_in=a_out;
-            adash_in=adash_out;
+            a_in=(0.1*(a_out-a_in))+a_in;
+            adash_in=(0.1*(adash_out-adash_in))+adash_in;
         else
             %If within tollerance then break out and return
             solfnd=true;
