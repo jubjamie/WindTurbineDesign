@@ -1,3 +1,6 @@
 
 *.xml
 .idea/WindTurbineDesign.iml
+WTInducedCalcs.asv
+main.asv
+lib/~$ValidationData.xlsx
