@@ -1,5 +1,5 @@
 # WindTurbineDesign
-BEMT Based Wind Turbine Design Coursework for Year 18/19
+BEMT Based Wind Turbine Design Coursework for Year 18/19.
 
 By using helicopter rotor theory, this work finds a technical optimum design for the blades of a 3 bladed wind turbine.
 
