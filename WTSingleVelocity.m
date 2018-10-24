@@ -5,7 +5,7 @@ function [Mt, Mn,S1] = WTSingleVelocity(V0, Theta0, ThetaTwist, MeanChord, c_gra
 global Hhub dhub Rmin Rmax c_mean M_rootmax F_Ymax rho_blade EI_blade Vmin Vmax A k w
 
 N=19 %set radius node count
-radius_delta=(TipRadius-RootRadius)/N; %Increment in radius
+radius_delta=(TipRadius-RootRadius)/(N-1); %Increment in radius
 S1=zeros(N,8); %Creat empty matrix to hold values
 
 for j=1:N
