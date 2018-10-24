@@ -17,7 +17,6 @@ for j=1:N
     S1(j,:)=[local_radius, a_s1, adash_s1, phi_s1, Cn_s1, Ct_s1, tol_s1, i_s1];
 
 end
-statustablematrix(S1,{'r', 'a', 'adash', 'phi', 'Cn', 'Ct', 'tol', 'i'},'status/s2_multivalidation.png',false);
 
 Mt=0;
 Mn=0;

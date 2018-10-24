@@ -55,4 +55,5 @@ saveas(f,'status/s1_singlevalidation.png');
 %% Section 2 Testing
 % Test the multi S1 validation case.
 [MT, MN, S1] = WTSingleVelocity(20, 0.209, -0.00698, 1, 0, 19.5 ,1.5, 3.1416, 3);
+statustablematrix(S1,{'r', 'a', 'adash', 'phi', 'Cn', 'Ct', 'tol', 'i'},'status/s2_multivalidation.png','figure');
 

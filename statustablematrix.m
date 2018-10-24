@@ -1,15 +1,20 @@
-function [tableform] = statustablematrix(data,headings,filepath,display)
+function [tableform] = statustablematrix(data,headings,filepath,displaytype)
 %STATUSTABLE Creates a status table from data
 %   Creates a status table from data with optional display.
 
 tableform=array2table(data, 'VariableNames',headings);
 
-if display==true
+if strcmp('print',displaytype)
     disp(tableform)
 end
 
 %Create figure for display.
-f = figure('visible','on');
+if strcmp('figure',displaytype)
+    f = figure('visible','on');
+else
+    f = figure('visible','off');
+end
+
 axis off
 hold on
 set(f, 'Position', [500 500 (size(data,2)*100) (25+(size(data,1)*20))])
