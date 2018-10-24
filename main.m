@@ -1,8 +1,7 @@
 %%Main script for WindTurbine Problem
 %---System Init---%
 % Add paths
-p=genpath('lib');
-addpath(p);
+p=genpath('lib');addpath(p);p=genpath('status');addpath(p);
 
 %---Set Global Constants---%
 %Define globals from cw sheets (see /docs)
@@ -35,10 +34,15 @@ init_R=19.5;
 table(a, adash, phi, Cn, Ct, tol, i);
 
 %Create figure for display.
-f = figure('visible','off');
+f = figure('visible','on');
 axis off
 hold on
 set(f, 'Position', [500 500 650 80])
-text(0.05,0.5, strcat('a: ', num2str(a)));
-text(0.15,0.5, strcat('a'': ', num2str(adash)));
+text(0,0.5, strcat('a: ', num2str(round(a,4))));
+text(0.15,0.5, strcat('a'': ', num2str(round(adash,4))));
+text(0.3,0.5, strcat('phi: ', num2str(round(phi,4))));
+text(0.45,0.5, strcat('Cn: ', num2str(round(Cn,4))));
+text(0.6,0.5, strcat('phi: ', num2str(round(Ct,4))));
+text(0.85,0.5, strcat('Converged in: ', num2str(i)));
+saveas(f,'status/s1_singlevalidation.png');
 
