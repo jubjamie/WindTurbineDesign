@@ -35,25 +35,6 @@ init_R=19.5;
 %s1singletable=table(a, adash, phi, Cn, Ct, tol, i);
 statustablematrix([a, adash, phi, Cn, Ct, tol, i],{'a', 'adash', 'phi', 'Cn', 'Ct', 'tol', 'i'},'status/s1_singlevalidation.png','figure');
 
-%{
-%Create figure for display.
-f = figure('visible','off');
-axis off
-hold on
-set(f, 'Position', [500 500 650 80])
-% Get the table in string form.
-TString = evalc('disp(s1singletable)');
-% Use TeX Markup for bold formatting and underscores.
-TString = strrep(TString,'<strong>','\bf');
-TString = strrep(TString,'</strong>','\rm');
-TString = strrep(TString,'_','\_');
-% Get a fixed-width font.
-FixedWidth = get(0,'FixedWidthFontName');
-% Output the table using the annotation command.
-annotation(gcf,'Textbox','String',TString,'Interpreter','Tex',...
-    'FontName',FixedWidth,'Units','Normalized','Position',[0 0 1 1]);
-saveas(f,'status/s1_singlevalidation.png');
-%}
 
 %% Section 2 Testing
 % Test the multi S1 validation case.
