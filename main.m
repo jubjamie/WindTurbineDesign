@@ -1,5 +1,6 @@
 %%Main script for WindTurbine Problem
 %---System Init---%
+close all
 % Add paths
 p=genpath('lib');addpath(p);p=genpath('status');addpath(p);
 
@@ -31,18 +32,23 @@ init_theta=0.0733;
 init_R=19.5;
 
 [a, adash, phi, Cn, Ct, tol, i]=WTInducedCalcs(init_a,init_adash,init_V0,w,init_R,init_theta,1,3);
-table(a, adash, phi, Cn, Ct, tol, i);
+s1singletable=table(a, adash, phi, Cn, Ct, tol, i);
 
 %Create figure for display.
-f = figure('visible','on');
+f = figure('visible','off');
 axis off
 hold on
 set(f, 'Position', [500 500 650 80])
-text(0,0.5, strcat('a: ', num2str(round(a,4))));
-text(0.15,0.5, strcat('a'': ', num2str(round(adash,4))));
-text(0.3,0.5, strcat('phi: ', num2str(round(phi,4))));
-text(0.45,0.5, strcat('Cn: ', num2str(round(Cn,4))));
-text(0.6,0.5, strcat('phi: ', num2str(round(Ct,4))));
-text(0.85,0.5, strcat('Converged in: ', num2str(i)));
+% Get the table in string form.
+TString = evalc('disp(s1singletable)');
+% Use TeX Markup for bold formatting and underscores.
+TString = strrep(TString,'<strong>','\bf');
+TString = strrep(TString,'</strong>','\rm');
+TString = strrep(TString,'_','\_');
+% Get a fixed-width font.
+FixedWidth = get(0,'FixedWidthFontName');
+% Output the table using the annotation command.
+annotation(gcf,'Textbox','String',TString,'Interpreter','Tex',...
+    'FontName',FixedWidth,'Units','Normalized','Position',[0 0 1 1]);
 saveas(f,'status/s1_singlevalidation.png');
 
