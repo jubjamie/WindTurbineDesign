@@ -1,4 +1,4 @@
-function [a_out, adash_out, phi_flow, Cn, Ct,curr_tol, i] = WTInducedCalcs(a, adash, V0, omega, y, theta, Chord, B)
+function [a_out, adash_out, phi_flow, Cn, Ct,Vrel,curr_tol, i] = WTInducedCalcs(a, adash, V0, omega, y, theta, Chord, B)
 %1: SINGLE ELEMENT: use an iterative solution to find the values of a,
 %adash, phi, Cn and Ct at a particular radius.
 

@@ -31,9 +31,9 @@ init_V0=20;
 init_theta=0.0733;
 init_R=19.5;
 
-[a, adash, phi, Cn, Ct, tol, i]=WTInducedCalcs(init_a,init_adash,init_V0,w,init_R,init_theta,1,3);
+[a, adash, phi, Cn, Ct,Vrel, tol, i]=WTInducedCalcs(init_a,init_adash,init_V0,w,init_R,init_theta,1,3);
 %s1singletable=table(a, adash, phi, Cn, Ct, tol, i);
-statustablematrix([a, adash, phi, Cn, Ct, tol, i],{'a', 'adash', 'phi', 'Cn', 'Ct', 'tol', 'i'},'status/s1_singlevalidation.png','figure');
+statustablematrix([a, adash, phi, Cn, Ct,Vrel, tol, i],{'a', 'adash', 'phi', 'Cn', 'Ct','Vrel', 'tol', 'i'},'status/s1_singlevalidation.png','figure');
 
 
 %% Section 2 Testing
