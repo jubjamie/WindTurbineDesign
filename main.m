@@ -32,4 +32,13 @@ init_theta=0.0733;
 init_R=19.5;
 
 [a, adash, phi, Cn, Ct, tol, i]=WTInducedCalcs(init_a,init_adash,init_V0,w,init_R,init_theta,1,3);
-table(a, adash, phi, Cn, Ct, tol, i)
+table(a, adash, phi, Cn, Ct, tol, i);
+
+%Create figure for display.
+f = figure('visible','off');
+axis off
+hold on
+set(f, 'Position', [500 500 650 80])
+text(0.05,0.5, strcat('a: ', num2str(a)));
+text(0.15,0.5, strcat('a'': ', num2str(adash)));
+
