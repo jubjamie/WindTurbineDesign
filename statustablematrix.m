@@ -12,7 +12,7 @@ end
 f = figure('visible','on');
 axis off
 hold on
-%set(f, 'Position', [500 500 650 80])
+set(f, 'Position', [500 500 (size(data,2)*100) (35+(size(data,1)*20))])
 % Get the table in string form.
 TString = evalc('disp(tableform)');
 % Use TeX Markup for bold formatting and underscores.
@@ -24,6 +24,6 @@ FixedWidth = get(0,'FixedWidthFontName');
 % Output the table using the annotation command.
 annotation(gcf,'Textbox','String',TString,'Interpreter','Tex',...
     'FontName',FixedWidth,'Units','Normalized','Position',[0 0 1 1]);
-%saveas(f,'status/s1_singlevalidation.png');
+saveas(f,filepath);
 end
 
