@@ -4,7 +4,7 @@ function [Mt, Mn,S2,Power] = WTSingleVelocity(V0, Theta0, ThetaTwist, MeanChord,
 %root.
 global Hhub dhub Rmin Rmax c_mean M_rootmax F_Ymax rho_blade EI_blade Vmin Vmax A k w
 
-N=19 %set radius node count
+N=19; %set radius node count
 radius_delta=(TipRadius-RootRadius)/(N); %Increment in radius
 S2=zeros(N,11); %Creat empty matrix to hold values
 
@@ -12,7 +12,6 @@ for j=1:N
     local_radius=RootRadius+((j-1)*radius_delta)+(radius_delta/2); % Calculate local radius from centre increment
     local_chord=c_mean+((local_radius-((TipRadius-RootRadius)/2))*c_grad); % Calculate tapered chord
     local_theta=Theta0+(local_radius*ThetaTwist);
-    disp(j);
     [a_s1, adash_s1, phi_s1, Cn_s1, Ct_s1, tol_s1, i_s1]=WTInducedCalcs(0,0,V0,w,local_radius,local_theta,local_chord,3);
     S2(j,1:8)=[local_radius, a_s1, adash_s1, phi_s1, Cn_s1, Ct_s1, tol_s1, i_s1];
     
@@ -27,5 +26,11 @@ end
 Mtot_t=sum(S2(:,10));
 Mtot_n=sum(S2(:,11));
 Power=Mtot_t*B*w
+Cp=Power/(0.5*1.225*(pi*(TipRadius-RootRadius)^2)*V0^3)
+if Cp<(16/27)
+    disp("Below Betz Limit");
+else
+    disp('Unrealistic - Above Betz Limit');
+end
 
 end
