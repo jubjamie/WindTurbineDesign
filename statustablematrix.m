@@ -17,7 +17,7 @@ end
 
 axis off
 hold on
-set(f, 'Position', [500 500 (size(data,2)*100) (25+(size(data,1)*20))])
+set(f, 'Position', [500 500 (size(data,2)*100) (52+(size(data,1)*17))])
 % Get the table in string form.
 TString = evalc('disp(tableform)');
 % Use TeX Markup for bold formatting and underscores.

@@ -32,8 +32,10 @@ init_theta=0.0733;
 init_R=19.5;
 
 [a, adash, phi, Cn, Ct, tol, i]=WTInducedCalcs(init_a,init_adash,init_V0,w,init_R,init_theta,1,3);
-s1singletable=table(a, adash, phi, Cn, Ct, tol, i);
+%s1singletable=table(a, adash, phi, Cn, Ct, tol, i);
+statustablematrix([a, adash, phi, Cn, Ct, tol, i],{'a', 'adash', 'phi', 'Cn', 'Ct', 'tol', 'i'},'status/s1_singlevalidation.png','figure');
 
+%{
 %Create figure for display.
 f = figure('visible','off');
 axis off
@@ -51,6 +53,7 @@ FixedWidth = get(0,'FixedWidthFontName');
 annotation(gcf,'Textbox','String',TString,'Interpreter','Tex',...
     'FontName',FixedWidth,'Units','Normalized','Position',[0 0 1 1]);
 saveas(f,'status/s1_singlevalidation.png');
+%}
 
 %% Section 2 Testing
 % Test the multi S1 validation case.
