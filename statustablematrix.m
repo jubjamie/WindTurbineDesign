@@ -1,4 +1,4 @@
-function [tableform] = statustablematrix(data,headings,filepath,displaytype)
+function [tableform] = statustablematrix(data,headings,filepath,ftitle,displaytype)
 %STATUSTABLE Creates a status table from data
 %   Creates a status table from data with optional display.
 
@@ -10,14 +10,14 @@ end
 
 %Create figure for display.
 if strcmp('figure',displaytype)
-    f = figure('visible','on');
+    f = figure('visible','on','Name',ftitle,'NumberTitle','off');
 else
     f = figure('visible','off');
 end
 
 axis off
 hold on
-set(f, 'Position', [500 500 (size(data,2)*100) (52+(size(data,1)*17))])
+set(f, 'Position', [500 500 (size(data,2)*90) (52+(size(data,1)*17))])
 % Get the table in string form.
 TString = evalc('disp(tableform)');
 % Use TeX Markup for bold formatting and underscores.
