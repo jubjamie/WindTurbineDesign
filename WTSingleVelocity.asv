@@ -10,12 +10,9 @@ S1=zeros(N,7); %Creat empty matrix to hold values
 for i=1:N
     local_radius=TipRadius+((N-1)*radius_delta); % Calculate local radius from increment
     local_chord=cmean+((local_radius-((TipRadius-RootRadius)/2))*cgrad); % Calculate tapered chord
-    local_theta=Theta0+(local_radius*ThetaTwist);
-    s1_out=WTInducedCalcs(0,0,V0,w,local_radius,local_theta,local_chord,3);
-    S1(i,:)=s1_out;
+    [a, adash, phi, Cn, Ct, tol, i]=WTInducedCalcs(0,0,V0,w,local_radius,Theta0,local_chord,3);
 
 end
-s1multitable=table(S1(:,1), S1(:,2), S1(:,3), S1(:,4), S1(:,5), S1(:,6), S1(:,7));
-disp(s1multitable);
+
 
 end

@@ -23,7 +23,7 @@ Vmin=5; Vmax=25; %m/s
 A=7; k=1.8;
 w=30*2*pi/60; %rad/s
 
-%%Section 1
+%% Section 1 Testing
 %Init a and adash for Section 1 function.
 init_a=0;
 init_adash=0;
@@ -51,4 +51,7 @@ FixedWidth = get(0,'FixedWidthFontName');
 annotation(gcf,'Textbox','String',TString,'Interpreter','Tex',...
     'FontName',FixedWidth,'Units','Normalized','Position',[0 0 1 1]);
 saveas(f,'status/s1_singlevalidation.png');
+
+%% Section 2 Testing
+% Test the multi S1 validation case.
 
