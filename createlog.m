@@ -1,4 +1,4 @@
-function [logid] = createlog()
+function [logid] = createlog(title)
 %CREATELOG Summary of this function goes here
 %   Detailed explanation goes here
 mydir  = pwd;
@@ -6,6 +6,7 @@ idcs   = strfind(mydir,filesep);
 newdir = mydir(1:idcs(end)-1);
 logstamp=datestr(now,'HH-MM-SS--yyyy-mm-dd');
 logid=fopen(strcat(newdir,'/logs/',logstamp ,'.log'), 'a');
+fprintf(logid,'---%s---\r\n',title);
 fprintf(logid,'Log created at: %s\r\n',logstamp);
 fprintf(logid,'Created by %s on %s\r\n',getenv('username'),getenv('computername'));
 fprintf(logid,'Computer: %s\r\n',getenv('computername'));
