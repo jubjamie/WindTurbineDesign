@@ -38,6 +38,6 @@ statustablematrix([a, adash, phi, Cn, Ct,Vrel, tol, i],{'a', 'adash', 'phi', 'Cn
 
 %% Section 2 Testing
 % Test the multi S1 validation case.
-[MT, MN, S2] = WTSingleVelocity(20, 0.209, -0.00698, 1, 0, 20 ,1, 3.1416, 3);
+[MT, MN, S2] = WTSingleVelocity(20, 0.209, -0.00698, 0, 20 ,1, 3);
 statustablematrix(S2,{'r', 'a', 'adash', 'phi', 'Cn', 'Ct', 'tol', 'i','Vrel','Mt','Mn'},'status/s2_multivalidation.png','Section 2 Multi Validation','figure');
 

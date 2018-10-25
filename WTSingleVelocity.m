@@ -9,7 +9,7 @@ radius_delta=(TipRadius-RootRadius)/(N); %Increment in radius
 S2=zeros(N,11); %Creat empty matrix to hold values
 
 for j=1:N
-    local_radius=RootRadius+((j-1)*radius_delta)+(radius_delta/2); % Calculate local radius from centre increment
+    local_radius=RootRadius+((j-1)*radius_delta)+(radius_delta/2); % Calculate local radius from centre increment TODO shorten this
     local_chord=c_mean+((local_radius-((TipRadius-RootRadius)/2))*c_grad); % Calculate tapered chord
     local_theta=Theta0+(local_radius*ThetaTwist);
     [a_s1, adash_s1, phi_s1, Cn_s1, Ct_s1, tol_s1, i_s1]=WTInducedCalcs(0,0,V0,w,local_radius,local_theta,local_chord,3);
