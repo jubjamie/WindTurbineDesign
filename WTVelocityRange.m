@@ -24,7 +24,7 @@ for vn=1:N
     local_power=0.5*(local_lower_power+local_upper_power);
     local_prob=windProb(A,k,lowerbandv0,upperbandv0);
     
-    local_ideal_power=(0.5*1.225*(pi*(TipRadius^2-RootRadius^2))*V0^3)*(16/27); % Ideal power using Betz limit.
+    local_ideal_power=(0.5*1.225*(pi*(TipRadius^2-RootRadius^2))*local_v^3)*(16/27); % Ideal power using Betz limit.
     
     local_AEP=local_power*local_prob*8760;
     local_AEP_ideal=local_ideal_power*local_prob*8760;
