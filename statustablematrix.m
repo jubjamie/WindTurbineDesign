@@ -29,7 +29,7 @@ FixedWidth = get(0,'FixedWidthFontName');
 % Output the table using the annotation command.
 annotation(gcf,'Textbox','String',TString,'Interpreter','Tex',...
     'FontName',FixedWidth,'Units','Normalized','Position',[0 0 1 1]);
-if isstring(filepath)
+if filepath(1) ~= false
 saveas(f,filepath);
 end
 end
