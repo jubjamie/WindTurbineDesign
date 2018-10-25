@@ -25,7 +25,7 @@ A=7; k=1.8;
 w=30*2*pi/60; %rad/s
 
 %System Globals
-global maxiters
+global maxiters logid
 
 %{
 

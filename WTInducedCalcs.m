@@ -1,12 +1,14 @@
 function [a_out, adash_out, phi_flow, Cn, Ct,Vrel,curr_tol, i] = WTInducedCalcs(a, adash, V0, omega, y, theta, Chord, B)
 %1: SINGLE ELEMENT: use an iterative solution to find the values of a,
 %adash, phi, Cn and Ct at a particular radius.
+global logid
 
 %Convergence Settings
-etol=0.000001;
+etol=0.0001;
 curr_tol=1;
 solfnd=false;
 looplimit=500;
+adash_looplimit=200;
 
 solidity=(B*Chord)/(2*pi*y);
  
@@ -30,7 +32,16 @@ adash_in=adash;
         curr_tol=abs(a_out-a_in)+abs(adash_out-adash_in);
         if curr_tol>etol
             a_in=(0.1*(a_out-a_in))+a_in;
-            adash_in=(0.1*(adash_out-adash_in))+adash_in;
+            
+            if i<adash_looplimit
+                adash_in=(0.1*(adash_out-adash_in))+adash_in;
+            else
+                adash_in=0;
+                adash_out=0;
+            end
+            if i==adash_looplimit
+                fprintf(logid,'S1 adash Limit Reached: a=%f, adash=%f Calling function: WTInducedCalcs(%f, %f, %f, %f, %f, %f, %f, %f)\r\n',a_out,adash_out,a, adash, V0, omega, y, theta, Chord, B);
+            end
         else
             %If within tollerance then break out and return
             solfnd=true;
@@ -42,6 +53,7 @@ adash_in=adash;
     
 if solfnd==false
 %disp(['Convergence failed and terminated after ' num2str(i) ' loops. Returning most recent values.']);
+fprintf(logid,'S1 Loop Limit Reached: a=%f, adash=%f Calling function: WTInducedCalcs(%f, %f, %f, %f, %f, %f, %f, %f)\r\n',a_out,adash_out,a, adash, V0, omega, y, theta, Chord, B);
 end
 
 end
