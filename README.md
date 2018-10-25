@@ -5,6 +5,12 @@ By using helicopter rotor theory, this work finds a technical optimum design for
 
 ## Current Status
 
+### Optimised Blade - Failing
+Latest optimiser solution.
+<p align="center">
+<img src="status/optSol.png?raw=true" />
+</p>
+
 ### Section 1 Single Validation Results
 Testing results for the Section 1 Induced Calcs single case validation test.
 <p align="center">
