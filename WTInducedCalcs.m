@@ -9,6 +9,7 @@ curr_tol=1;
 solfnd=false;
 looplimit=500;
 adash_looplimit=200;
+negCtFnd=false;
 
 solidity=(B*Chord)/(2*pi*y);
  
@@ -28,12 +29,24 @@ adash_in=adash;
         a_out=1/(((4*(sin(phi_flow)^2))/(solidity*Cn))+1);
         adash_out=1/(((4*(sin(phi_flow)*cos(phi_flow))/(solidity*Ct))-1));
         
+        if Ct<0 && negCtFnd==false 
+            fprintf(logid,'Negative Ct found: Ct=%f, a=%f, adash=%f Calling function: WTInducedCalcs(%f, %f, %f, %f, %f, %f, %f, %f)\r\n',Ct,a_out,adash_out,a, adash, V0, omega, y, theta, Chord, B);
+            negCtFnd=true;
+        end
+        
         %Test for convergance
         curr_tol=abs(a_out-a_in)+abs(adash_out-adash_in);
         if curr_tol>etol
+            %See if a near boundaries
             a_in_relax=(0.05*(a_out-a_in))+a_in;
-            if a_in_relax>0.95
+            if a_in_relax>0.95 || a_in_relax<0
+                if a_out<0
+                    a_in=0;
+                elseif a_out>1
+                    a_in=1;
+                else
                 a_in=a_out;
+                end
             else
                 a_in=a_in_relax;
             end
@@ -44,7 +57,21 @@ adash_in=adash;
         end
             
             if i<adash_looplimit
-                adash_in=(0.05*(adash_out-adash_in))+adash_in;
+                %See if adash near boundaries
+                %adash_in_relax=(0.05*(adash_out-adash_in))+adash_in;
+                adash_in_relax=adash_out;
+            if adash_in_relax>0.95 || adash_in_relax<0
+                if adash_out<0
+                    adash_in=0;
+                elseif adash_out>1
+                    adash_in=1;
+                else
+                adash_in=adash_out;
+                end
+            else
+                adash_in=adash_in_relax;
+            end
+                
             else
                 adash_in=0;
                 adash_out=0;
