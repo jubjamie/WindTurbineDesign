@@ -63,6 +63,9 @@ statustablematrix(S3,{'V0', 'Power', 'Probability', 'AEP', 'Ideal_AEP', 'Differe
 %% Part B Optimisation
 % Aim to minimise the difference returned by AEP S3 calcs
 %WIP
+% Create Log File
+createlog();
+
 maxiters=5;
 progressbar('Calculating Power', 'Solving Rotor', 'Finding Local Induced Flow', 'Optimisation');
 %progressbar([],[],[], (1/maxiters));
@@ -96,3 +99,4 @@ end
 
 %% Clean Up
 progressbar(1,1,1,1);
+fclose(logid);
