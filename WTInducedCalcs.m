@@ -38,9 +38,10 @@ adash_in=adash;
                 a_in=a_in_relax;
             end
             
-            if i==adash_looplimit
-                fprintf(logid,'S1 adash Limit Reached: a=%f, adash=%f Calling function: WTInducedCalcs(%f, %f, %f, %f, %f, %f, %f, %f)\r\n',a_out,adash_out,a, adash, V0, omega, y, theta, Chord, B);
-            end
+        %Log adash loop limit
+        if i==adash_looplimit
+            fprintf(logid,'S1 adash Limit Reached: a=%f, adash=%f Calling function: WTInducedCalcs(%f, %f, %f, %f, %f, %f, %f, %f)\r\n',a_out,adash_out,a, adash, V0, omega, y, theta, Chord, B);
+        end
             
             if i<adash_looplimit
                 adash_in=(0.05*(adash_out-adash_in))+adash_in;
