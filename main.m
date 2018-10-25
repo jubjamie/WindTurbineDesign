@@ -67,6 +67,19 @@ opts.TolX = 0.001; %Tolerance on the variation in the parameters
 opts.TolFun = 0.001; %Tolerance on the error
 opts.MaxFunEvals = maxiters; %Max number of iterations
 [x, diff, exitflag] = fminsearchbnd(@aepCost, [deg2rad(12) deg2rad(-0/4) 0], [0 -2 0], [20 2 1], opts);
+xdeg=[rad2deg(x(1)),rad2deg(x(2)),x(3)];
+if exitflag==1
+    disp('Optimiser SOLVED.');
+elseif exitflag==0
+    disp(['Optimiser reached MAX iterations of ' maxiters '. Most recent solution:']);
+elseif exitflag==-1
+    disp('Optimiser has been stopped by an output function. Most recent solution;');
+else
+    disp('Optimiser has been stopped unexpectedly. See the command window for possible errors. Most recent solution:');
+end
+
+statustablematrix(xdeg, {'Theta','Theta_Twist','c_grad'}, 'status/optSol.png', 'Optimiser Results','figure',1);
+    
 
 %% Clean Up
 progressbar(1,1,1,1);
