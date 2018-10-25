@@ -9,7 +9,7 @@ radius_delta=(TipRadius-RootRadius)/(N); %Increment in radius
 S2=zeros(N,11); %Creat empty matrix to hold values
 
 for j=1:N
-    progressbar([],j/N,[],[]);
+    progressbar([],j/(N+1),[],[]);
     local_radius=RootRadius+((j-1)*radius_delta)+(radius_delta/2); % Calculate local radius from centre increment TODO shorten this
     local_chord=c_mean+((local_radius-((TipRadius-RootRadius)/2))*c_grad); % Calculate tapered chord
     local_theta=Theta0+(local_radius*ThetaTwist);

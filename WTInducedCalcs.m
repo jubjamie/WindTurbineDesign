@@ -15,7 +15,7 @@ a_in=a;
 adash_in=adash;
 
     for i=1:looplimit
-        progressbar([],[],i/looplimit, []);
+        progressbar([],[],i/(looplimit+1), []);
         phi_flow=atan(((1-a_in)*V0)/((1+adash_in)*omega*y));
         alpha=phi_flow-theta;
         Vrel=((V0*(1-a_in))^2 + (omega*y*(1+adash_in))^2)^0.5;
@@ -34,14 +34,14 @@ adash_in=adash;
         else
             %If within tollerance then break out and return
             solfnd=true;
-            progressbar([],[],1);
+            progressbar([],[],1,[]);
             break
         end
        
     end
     
 if solfnd==false
-disp(["Convergence failed and terminated after " i " loops. Returning most recent values."]);
+%disp(['Convergence failed and terminated after ' num2str(i) ' loops. Returning most recent values.']);
 end
 
 end

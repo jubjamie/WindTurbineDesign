@@ -9,7 +9,7 @@ V0delta=(MaxV0-MinV0)/N; % Find the velocity delta for each node
 S3=zeros(N,7); %Create empty matrix for S3 results
 
 for vn=1:N
-    progressbar(vn/N,[],[],[]);
+    progressbar(vn/(N+1),[],[],[]);
     local_v=MinV0+((vn-0.5)*V0delta);
     
     %Band boundary cals - LOWER
@@ -34,7 +34,7 @@ for vn=1:N
     S3(vn,:)=[local_v, local_power, local_prob, local_AEP, local_AEP_ideal, local_diff, local_eff];
 end
 
-AEP=sum(S3(:,4))
-total_diff=sum(S3(:,6))
+AEP=sum(S3(:,4));
+total_diff=sum(S3(:,6));
 
 end
