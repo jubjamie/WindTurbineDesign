@@ -54,3 +54,5 @@ defaultBlade=[deg2rad(12), deg2rad(-0.4), 0];
 [total_diff, AEP, S3] = WTVelocityRange(defaultBlade, A, k, w, c_mean, 20, 1, 3, 5, 25);
 statustablematrix(S3,{'V0', 'Power', 'Probability', 'AEP', 'Ideal_AEP', 'Difference', 'Efficiency'},'status/s3_multivalidation.png','Section 3 Multi AEP Validation','figure',1.3);
 
+%% Clean Up
+progressbar(1,1,1);
