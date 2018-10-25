@@ -6,6 +6,7 @@ function [a_out, adash_out, phi_flow, Cn, Ct,Vrel,curr_tol, i] = WTInducedCalcs(
 etol=0.000001;
 curr_tol=1;
 solfnd=false;
+looplimit=500;
 
 solidity=(B*Chord)/(2*pi*y);
  
@@ -13,7 +14,8 @@ solidity=(B*Chord)/(2*pi*y);
 a_in=a;
 adash_in=adash;
 
-    for i=1:500
+    for i=1:looplimit
+        progressbar([],[],i/looplimit);
         phi_flow=atan(((1-a_in)*V0)/((1+adash_in)*omega*y));
         alpha=phi_flow-theta;
         Vrel=((V0*(1-a_in))^2 + (omega*y*(1+adash_in))^2)^0.5;
@@ -32,6 +34,7 @@ adash_in=adash;
         else
             %If within tollerance then break out and return
             solfnd=true;
+            progressbar([],[],1);
             break
         end
        
