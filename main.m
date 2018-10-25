@@ -31,6 +31,7 @@ global maxiters logid
 
 %% Section 1 Testing
 %Init a and adash for Section 1 function.
+logid=createlog('S1 Loop Testing');
 progressbar('Calculating Power', 'Solving Rotor', 'Finding Local Induced Flow', 'Optimisation');
 
 init_a=0;
