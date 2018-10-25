@@ -1,7 +1,7 @@
 %%Main script for WindTurbine Problem
 %---System Init---%
 close all
-progressbar('Calculating Power', 'Solving Rotor', 'Finding Local Induced Flow');
+progressbar('Calculating Power', 'Solving Rotor', 'Finding Local Induced Flow', 'Optimisation');
 % Add paths
 p=genpath('lib');addpath(p);p=genpath('status');addpath(p);
 
@@ -23,6 +23,9 @@ EI_blade=40e9 * (c_mean*(0.2*c_mean)^3)/12; %TEMP - GPA
 Vmin=5; Vmax=25; %m/s
 A=7; k=1.8;
 w=30*2*pi/60; %rad/s
+
+%System Globals
+global maxiters
 
 %% Section 1 Testing
 %Init a and adash for Section 1 function.
@@ -54,5 +57,16 @@ defaultBlade=[deg2rad(12), deg2rad(-0.4), 0];
 [total_diff, AEP, S3] = WTVelocityRange(defaultBlade, A, k, w, c_mean, 20, 1, 3, 5, 25);
 statustablematrix(S3,{'V0', 'Power', 'Probability', 'AEP', 'Ideal_AEP', 'Difference', 'Efficiency'},'status/s3_multivalidation.png','Section 3 Multi AEP Validation','figure',1.3);
 
+%% Part B Optimisation
+% Aim to minimise the difference returned by AEP S3 calcs
+%WIP
+maxiters=20;
+opts = optimset('fminsearch');
+opts.Display = 'iter'; %What to display in command window
+opts.TolX = 0.001; %Tolerance on the variation in the parameters
+opts.TolFun = 0.001; %Tolerance on the error
+opts.MaxFunEvals = maxiters; %Max number of iterations
+[x, diff, exitflag] = fminsearchbnd(@aepCost, [deg2rad(12) deg2rad(-0/4) 0], [0 -2 0], [20 2 1], opts);
+
 %% Clean Up
-progressbar(1,1,1);
+progressbar(1,1,1,1);
