@@ -41,3 +41,9 @@ statustablematrix([a, adash, phi, Cn, Ct,Vrel, tol, i],{'a', 'adash', 'phi', 'Cn
 [MT, MN, S2] = WTSingleVelocity(20, 0.209, -0.00698, 0, 20 ,1, 3);
 statustablematrix(S2,{'r', 'a', 'adash', 'phi', 'Cn', 'Ct', 'tol', 'i','Vrel','Mt','Mn'},'status/s2_multivalidation.png','Section 2 Multi Validation','figure');
 
+%% Section 3 Testing
+% Test the AEP output for S3 Validation Case
+defaultBlade=[deg2rad(12), deg2rad(-0.4), 0];
+[total_diff, AEP, S3] = WTVelocityRange(defaultBlade, A, k, w, c_mean, 20, 1, 3, 5, 25);
+statustablematrix(S3,{'V0', 'Power', 'Probability', 'AEP', 'Ideal IEP', 'Difference', 'Efficiency'},'status/s3_multivalidation.png','Section 2 Multi Validation','figure');
+
