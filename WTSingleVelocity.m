@@ -26,7 +26,7 @@ end
 Mtot_t=sum(S2(:,10));
 Mtot_n=sum(S2(:,11));
 Power=Mtot_t*B*w
-Cp=Power/(0.5*1.225*(pi*(TipRadius-RootRadius)^2)*V0^3)
+Cp=Power/(0.5*1.225*(pi*(TipRadius^2-RootRadius^2))*V0^3)
 if Cp<(16/27)
     disp("Below Betz Limit");
 else
