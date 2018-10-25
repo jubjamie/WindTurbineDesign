@@ -31,17 +31,24 @@ adash_in=adash;
         %Test for convergance
         curr_tol=abs(a_out-a_in)+abs(adash_out-adash_in);
         if curr_tol>etol
-            a_in=(0.1*(a_out-a_in))+a_in;
+            a_in_relax=(0.05*(a_out-a_in))+a_in;
+            if a_in_relax>0.95
+                a_in=a_out;
+            else
+                a_in=a_in_relax;
+            end
+            
+            if i==adash_looplimit
+                fprintf(logid,'S1 adash Limit Reached: a=%f, adash=%f Calling function: WTInducedCalcs(%f, %f, %f, %f, %f, %f, %f, %f)\r\n',a_out,adash_out,a, adash, V0, omega, y, theta, Chord, B);
+            end
             
             if i<adash_looplimit
-                adash_in=(0.1*(adash_out-adash_in))+adash_in;
+                adash_in=(0.05*(adash_out-adash_in))+adash_in;
             else
                 adash_in=0;
                 adash_out=0;
             end
-            if i==adash_looplimit
-                fprintf(logid,'S1 adash Limit Reached: a=%f, adash=%f Calling function: WTInducedCalcs(%f, %f, %f, %f, %f, %f, %f, %f)\r\n',a_out,adash_out,a, adash, V0, omega, y, theta, Chord, B);
-            end
+            
         else
             %If within tollerance then break out and return
             solfnd=true;

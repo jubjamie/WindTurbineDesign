@@ -31,6 +31,7 @@ global maxiters logid
 
 %% Section 1 Testing
 %Init a and adash for Section 1 function.
+logid=createlog('S1 Loop Testing');
 progressbar('Calculating Power', 'Solving Rotor', 'Finding Local Induced Flow', 'Optimisation');
 
 init_a=0;
@@ -39,7 +40,8 @@ init_V0=20;
 init_theta=0.0733;
 init_R=19.5;
 
-[a, adash, phi, Cn, Ct,Vrel, tol, i]=WTInducedCalcs(init_a,init_adash,init_V0,w,init_R,init_theta,1,3);
+%[a, adash, phi, Cn, Ct,Vrel, tol, i]=WTInducedCalcs(init_a,init_adash,init_V0,w,init_R,init_theta,1,3);
+[a, adash, phi, Cn, Ct,Vrel, tol, i]=WTInducedCalcs(0.000000, 0.000000, 15.000000, 3.141593, 15.500000, 0.129, 1.008323, 3.000000);
 %s1singletable=table(a, adash, phi, Cn, Ct, tol, i);
 statustablematrix([a, adash, phi, Cn, Ct,Vrel, tol, i],{'a', 'adash', 'phi', 'Cn', 'Ct','Vrel', 'tol', 'i'},'status/s1_singlevalidation.png','Section 1 Single Validation','print',1);
 
