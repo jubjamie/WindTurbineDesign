@@ -84,8 +84,15 @@ else
     disp('Optimiser has been stopped unexpectedly. See the command window for possible errors. Most recent solution:');
 end
 
-statustablematrix(xdeg, {'Theta','Theta_Twist','c_grad'}, 'status/optSol.png', 'Optimiser Results','print',1.5);
-    
+statustablematrix(xdeg, {'Theta','Theta_Twist','c_grad'}, 'status/optSolSmall.png', 'Optimiser Results','print',1.5);
+
+runSolutionInput=questdlg('Parse solution through S3?','Yes','No');
+switch runSolutionInput
+    case 'Yes'
+       run('lastSolution');
+        
+        
+end
 
 %% Clean Up
 progressbar(1,1,1,1);
