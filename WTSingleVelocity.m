@@ -1,4 +1,4 @@
-function [Mt, Mn,S2,Power] = WTSingleVelocity(V0, Theta0, ThetaTwist, MeanChord, c_grad, TipRadius,RootRadius, omega, B)
+function [Mt, Mn,S2,Power] = WTSingleVelocity(V0, Theta0, ThetaTwist, c_grad, TipRadius,RootRadius, B)
 %2: WHOLE ROTOR - loop WTInducedCalcs to find the values for all radii,
 %then integrate these to get the normal and tangential moment at the blade
 %root.
@@ -16,7 +16,7 @@ for j=1:N
     S2(j,1:8)=[local_radius, a_s1, adash_s1, phi_s1, Cn_s1, Ct_s1, tol_s1, i_s1];
     
     %Calculate each moment
-    Vrel=((V0*(1-a_s1))^2 + (omega*local_radius*(1+adash_s1))^2)^0.5;
+    Vrel=((V0*(1-a_s1))^2 + (w*local_radius*(1+adash_s1))^2)^0.5;
     Mt=(0.5*1.225*local_chord*Ct_s1*Vrel^2)*radius_delta*local_radius;
     Mn=(0.5*1.225*local_chord*Cn_s1*Vrel^2)*radius_delta*local_radius;
     S2(j,9:11)=[Vrel,Mt,Mn];
