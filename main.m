@@ -34,7 +34,7 @@ global maxiters logid
 % Create Log File
 [logid, logpath]=createlog('Part B Optimiser');
 
-maxiters=3;
+maxiters=5;
 progressbar('Calculating Power', 'Solving Rotor', 'Finding Local Induced Flow', 'Optimisation');
 %progressbar([],[],[], (1/maxiters));
 opts = optimset('fminsearch');
