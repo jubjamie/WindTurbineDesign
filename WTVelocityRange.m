@@ -14,12 +14,14 @@ for vn=1:N
     
     %Band boundary cals - LOWER
     lowerbandv0=MinV0+((vn-1)*V0delta);
-        
+    [~,~,~,local_lower_power]=WTSingleVelocity(lowerbandv0, bladeConfig(1), bladeConfig(2), bladeConfig(3), TipRadius,RootRadius, B);
+    
     %Band boundary cals - Upper
     upperbandv0=MinV0+(vn*V0delta);
-        
+    [~,~,~,local_upper_power]=WTSingleVelocity(upperbandv0, bladeConfig(1), bladeConfig(2), bladeConfig(3), TipRadius,RootRadius, B);
+    
     %Find node power as mean of boundary values
-    [~,~,~,local_power]=WTSingleVelocity(local_v, bladeConfig(1), bladeConfig(2), bladeConfig(3), TipRadius,RootRadius, B);
+    local_power=0.5*(local_lower_power+local_upper_power);
     local_prob=windProb(A,k,lowerbandv0,upperbandv0);
     
     local_ideal_power=(0.5*1.225*(pi*(TipRadius^2-RootRadius^2))*local_v^3)*(16/27); % Ideal power using Betz limit.
