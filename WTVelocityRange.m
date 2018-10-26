@@ -30,7 +30,7 @@ for vn=1:N
     local_AEP_ideal=local_ideal_power*local_prob*8760;
     local_diff=local_AEP_ideal-local_AEP;
     local_eff=local_AEP/local_AEP_ideal;
-        
+    
     S3(vn,:)=[local_v, local_power, local_prob, local_AEP, local_AEP_ideal, local_diff, local_eff];
 end
 
