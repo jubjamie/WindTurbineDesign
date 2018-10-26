@@ -27,7 +27,7 @@ w=30*2*pi/60; %rad/s
 %System Globals
 global maxiters logid
 
-%{
+
 
 %% Section 1 Testing
 %Init a and adash for Section 1 function.
@@ -40,10 +40,10 @@ init_V0=20;
 init_theta=0.0733;
 init_R=19.5;
 
-%[a, adash, phi, Cn, Ct,Vrel, tol, i]=WTInducedCalcs(init_a,init_adash,init_V0,w,init_R,init_theta,1,3);
-[a, adash, phi, Cn, Ct,Vrel, tol, i]=WTInducedCalcs(0.000000, 0.000000, 15.000000, 3.141593, 15.500000, 0.129, 1.008323, 3.000000);
+[a, adash, phi, Cn, Ct,Vrel, tol, i]=WTInducedCalcs(init_a,init_adash,init_V0,w,init_R,init_theta,1,3);
+%[a, adash, phi, Cn, Ct,Vrel, tol, i]=WTInducedCalcs(0, 0, 5.000000, 3.141593, 8.500000, 0.193245, 1.000000, 3.000000);
 %s1singletable=table(a, adash, phi, Cn, Ct, tol, i);
-statustablematrix([a, adash, phi, Cn, Ct,Vrel, tol, i],{'a', 'adash', 'phi', 'Cn', 'Ct','Vrel', 'tol', 'i'},'status/s1_singlevalidation.png','Section 1 Single Validation','print',1);
+statustablematrix([a, adash, phi, Cn, Ct,Vrel, tol, i],{'a', 'adash', 'phi', 'Cn', 'Ct','Vrel', 'tol', 'i'},'status/s1_singlevalidation.png','Section 1 Single Validation','figure',1);
 
 
 %% Section 2 Testing
@@ -51,7 +51,8 @@ statustablematrix([a, adash, phi, Cn, Ct,Vrel, tol, i],{'a', 'adash', 'phi', 'Cn
 progressbar('Calculating Power', 'Solving Rotor', 'Finding Local Induced Flow', 'Optimisation');
 
 [MT, MN, S2] = WTSingleVelocity(20, 0.209, -0.00698, 0, 20 ,1, 3);
-statustablematrix(S2,{'r', 'a', 'adash', 'phi', 'Cn', 'Ct', 'tol', 'i','Vrel','Mt','Mn'},'status/s2_multivalidation.png','Section 2 Multi Validation','print',1);
+statustablematrix(S2,{'r', 'a', 'adash', 'phi', 'Cn', 'Ct', 'tol', 'i','Vrel','Mt','Mn'},'status/s2_multivalidation.png','Section 2 Multi Validation','figure',1);
+
 
 %% Section 3 Testing
 % Test the AEP output for S3 Validation Case
@@ -60,15 +61,16 @@ progressbar('Calculating Power', 'Solving Rotor', 'Finding Local Induced Flow', 
 defaultBlade=[deg2rad(12), deg2rad(-0.4), 0];
 [total_diff, AEP, S3] = WTVelocityRange(defaultBlade, A, k, w, c_mean, 20, 1, 3, 5, 25);
 statustablematrix(S3,{'V0', 'Power', 'Probability', 'AEP', 'Ideal_AEP', 'Difference', 'Efficiency'},'status/s3_multivalidation.png','Section 3 Multi AEP Validation','figure',1.3);
-%}
 
+
+%{
 %% Part B Optimisation
 % Aim to minimise the difference returned by AEP S3 calcs
 %WIP
 % Create Log File
 logid=createlog('Part B Optimiser');
 
-maxiters=2;
+maxiters=3;
 progressbar('Calculating Power', 'Solving Rotor', 'Finding Local Induced Flow', 'Optimisation');
 %progressbar([],[],[], (1/maxiters));
 opts = optimset('fminsearch');
@@ -77,7 +79,7 @@ opts.TolX = 0.0001; %Tolerance on the variation in the parameters
 opts.TolFun = 0.001; %Tolerance on the error
 opts.OutputFcn = @optMonitor; %Tolerance on the error
 opts.MaxIter = maxiters-1; %Max number of iterations
-[x, diff, exitflag] = fminsearchbnd(@aepCost, [deg2rad(12) deg2rad(-0.4) 0], [deg2rad(4) deg2rad(-2) 0], [deg2rad(20) deg2rad(2) 0.9], opts);
+[x, diff, exitflag] = fminsearchbnd(@aepCost, [deg2rad(12) deg2rad(-0.4) 0], [deg2rad(4) deg2rad(-2) 0], [deg2rad(20) deg2rad(-0.1) 0.9], opts);
 xdeg=[rad2deg(x(1)),rad2deg(x(2)),x(3)];
 if exitflag==1
     disp('Optimiser SOLVED.');
@@ -98,6 +100,7 @@ switch runSolutionInput
         
         
 end
+%}
 
 %% Clean Up
 progressbar(1,1,1,1);
