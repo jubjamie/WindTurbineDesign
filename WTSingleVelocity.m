@@ -13,7 +13,6 @@ for j=1:N
     local_radius=RootRadius+((j-1)*radius_delta)+(radius_delta/2); % Calculate local radius from centre increment TODO shorten this
     local_chord=c_mean+((local_radius-((TipRadius-RootRadius)/2))*c_grad); % Calculate tapered chord
     local_theta=Theta0+(local_radius*ThetaTwist);
-    [a_s1, adash_s1, phi_s1, Cn_s1, Ct_s1, tol_s1, i_s1]=WTInducedCalcs(0,0,V0,w,local_radius,local_theta,local_chord,3);
     [a_s1, adash_s1, phi_s1, Cn_s1, Ct_s1, Vrel, tol_s1, i_s1]=WTInducedCalcs(0,0,V0,w,local_radius,local_theta,local_chord,3);
     if a_s1<0 || adash_s1<0
         fprintf(logid,'S2 Negatives Detected: a=%f, adash=%f Calling function: WTSingleVelocity(%f, %f, %f, %f, %f,%f,%f)\r\n',a_s1, adash_s1,V0, Theta0, ThetaTwist, c_grad, TipRadius,RootRadius, B);
@@ -21,7 +20,6 @@ for j=1:N
     S2(j,1:8)=[local_radius, a_s1, adash_s1, phi_s1, Cn_s1, Ct_s1, tol_s1, i_s1];
     
     %Calculate each moment
-    Vrel=((V0*(1-a_s1))^2 + (w*local_radius*(1+adash_s1))^2)^0.5;
     Mt=(0.5*1.225*local_chord*Ct_s1*Vrel^2)*radius_delta*local_radius;
     Mn=(0.5*1.225*local_chord*Cn_s1*Vrel^2)*radius_delta*local_radius;
     S2(j,9:11)=[Vrel,Mt,Mn];
