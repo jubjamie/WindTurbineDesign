@@ -4,7 +4,7 @@ function [logid] = createlog(title)
 mydir  = pwd;
 idcs   = strfind(mydir,filesep);
 newdir = mydir(1:idcs(end)-1);
-logstamp=datestr(now,'HH-MM-SS--yyyy-mm-dd');
+logstamp=datestr(now,'yyyy-mm-dd--HH-MM-SS');
 logid=fopen(strcat(newdir,'/logs/',logstamp ,'.log'), 'a');
 fprintf(logid,'---%s---\r\n',title);
 fprintf(logid,'Log created at: %s\r\n',logstamp);
