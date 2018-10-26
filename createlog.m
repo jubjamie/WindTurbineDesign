@@ -1,4 +1,4 @@
-function [logid] = createlog(title)
+function [logid,logstamp] = createlog(title)
 %CREATELOG Summary of this function goes here
 %   Detailed explanation goes here
 mydir  = pwd;

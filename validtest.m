@@ -26,7 +26,7 @@ w=30*2*pi/60; %rad/s
 %System Globals
 global maxiters logid
 
-logid=createlog('Unit Validation Tests');
+[logid,logpath]=createlog('Unit Validation Tests');
 fprintf(logid,'\r\n> > > Start < < <\r\n');
 tic;
 
@@ -94,5 +94,6 @@ fprintf(logid,'\r\n> > > END < < <\r\n');
 fprintf(logid,'Tests Completed in %f seconds---\r\n',runtimer);
 %% Clean Up
 disp(['Tests Completed in ' num2str(runtimer) ' seconds']);
+disp(['<a href = "../logs/' logpath '.log">Open Session Log</a>']);
 progressbar(1,1,1,1);
 fclose(logid);

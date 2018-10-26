@@ -32,7 +32,7 @@ global maxiters logid
 % Aim to minimise the difference returned by AEP S3 calcs
 %WIP
 % Create Log File
-logid=createlog('Part B Optimiser');
+[logid, logpath]=createlog('Part B Optimiser');
 
 maxiters=3;
 progressbar('Calculating Power', 'Solving Rotor', 'Finding Local Induced Flow', 'Optimisation');
@@ -69,3 +69,4 @@ end
 %% Clean Up
 progressbar(1,1,1,1);
 fclose(logid);
+disp(['<a href = "../logs/' logpath '.log">Open Session Log</a>']);
