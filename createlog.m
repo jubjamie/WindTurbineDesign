@@ -1,4 +1,4 @@
-function [logid] = createlog(title)
+function [logid,logstamp] = createlog(title)
 %CREATELOG Summary of this function goes here
 %   Detailed explanation goes here
 mydir  = pwd;
@@ -14,4 +14,3 @@ fprintf(logid,'OS: %s\r\n',getenv('os'));
 fprintf(logid,'Processors: %s\r\n',getenv('number_of_processors'));
 fprintf(logid,'Threads: %s\r\n',getenv('omp_num_threads'));
 end
-

@@ -1,9 +1,12 @@
 function stop = optMonitor(x, optimValues,state)
 %OPTMONITOR Summary of this function goes here
 %   Detailed explanation goes here
-global maxiters
+global maxiters etol
 currOptIt=double(optimValues.iteration)+1;
 currPos=currOptIt/maxiters;
+if currPos>0.5
+    etol=0.0001;
+end
 switch state
     case 'init'
         %disp('Optimiser booting');

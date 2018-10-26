@@ -23,7 +23,7 @@ for j=1:N
     Mt=(0.5*1.225*local_chord*Ct_s1*Vrel^2)*radius_delta*local_radius;
     Mn=(0.5*1.225*local_chord*Cn_s1*Vrel^2)*radius_delta*local_radius;
     S2(j,9:11)=[Vrel,Mt,Mn];
-
+    
 end
 
 Mtot_t=sum(S2(:,10));
