@@ -1,9 +1,9 @@
 %%Main script for WindTurbine Problem
 %---System Init---%
 close all
-progressbar('Calculating Power', 'Solving Rotor', 'Finding Local Induced Flow', 'Optimisation');
-% Add paths
 p=genpath('lib');addpath(p);p=genpath('status');addpath(p);
+progressbar('Calculating Power', 'Solving Rotor', 'Finding Local Induced Flow', 'Optimisation');
+
 
 %---Set Global Constants---%
 %Define globals from cw sheets (see /docs)
