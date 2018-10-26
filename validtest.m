@@ -27,7 +27,7 @@ w=30*2*pi/60; %rad/s
 global maxiters logid
 
 logid=createlog('Unit Validation Tests');
-fprintf(logid,'> > > Start < < <\r\n');
+fprintf(logid,'\r\n> > > Start < < <\r\n');
 tic;
 
 
@@ -46,20 +46,35 @@ init_R=19.5;
 %[a, adash, phi, Cn, Ct,Vrel, tol, i]=WTInducedCalcs(0, 0, 5.000000, 3.141593, 8.500000, 0.193245, 1.000000, 3.000000);
 %s1singletable=table(a, adash, phi, Cn, Ct, tol, i);
 statustablematrix([a, adash, phi, Cn, Ct,Vrel, tol, i],{'a', 'adash', 'phi', 'Cn', 'Ct','Vrel', 'tol', 'i'},'status/s1_singlevalidation.png','Section 1 Single Validation','None',1);
-
+validS1metric=(a/0.0783)*100;
+if validS1metric>95 && validS1metric<105
+    disp(['Single Radius Test Passed: ' num2str(validS1metric) '%']);
+    fprintf(logid,'Single Radius Passed: %f%%\r\n',validS1metric);
+else
+    warning(['Single Radius Test Failed: ' num2str(validS1metric) '%']);
+    fprintf(logid,'Single Radius Rotor Failed: %f%%\r\n',validS1metric);
+end  
 
 %% Section 2 Testing
 % Test the multi S1 validation case.
-fprintf(logid,'---Section 2 Multi Node Rotor Test---\r\n');
+fprintf(logid,'\r\n---Section 2 Multi Node Rotor Test---\r\n');
 progressbar('Calculating Power', 'Solving Rotor', 'Finding Local Induced Flow', 'Optimisation');
 
 [MT, MN, S2] = WTSingleVelocity(20, 0.209, -0.00698, 0, 20 ,1, 3);
 statustablematrix(S2,{'r', 'a', 'adash', 'phi', 'Cn', 'Ct', 'tol', 'i','Vrel','Mt','Mn'},'status/s2_multivalidation.png','Section 2 Multi Validation','None',1);
 
+validS2metric=(S2(3,2)/0.088501)*100;
+if validS2metric>95 && validS2metric<105
+    disp(['Full Rotor Test Passed: ' num2str(validS2metric) '%']);
+    fprintf(logid,'Full Rotor Passed: %f%%\r\n',validS2metric);
+else
+    warning(['Full Rotor Test Failed: ' num2str(validS2metric) '%']);
+    fprintf(logid,'Full Rotor Failed: %f%%\r\n',validS2metric);
+end  
 
 %% Section 3 Testing
 % Test the AEP output for S3 Validation Case
-fprintf(logid,'---Section 3 AEP Test---\r\n');
+fprintf(logid,'\r\n---Section 3 AEP Test---\r\n');
 progressbar('Calculating Power', 'Solving Rotor', 'Finding Local Induced Flow', 'Optimisation');
 
 defaultBlade=[deg2rad(12), deg2rad(-0.4), 0];
@@ -75,7 +90,7 @@ else
     fprintf(logid,'AEP Test Failed: %f%%\r\n',validS3metric);
 end    
 runtimer=toc;
-fprintf(logid,'> > > END < < <\r\n');
+fprintf(logid,'\r\n> > > END < < <\r\n');
 fprintf(logid,'Tests Completed in %f seconds---\r\n',runtimer);
 %% Clean Up
 disp(['Tests Completed in ' num2str(runtimer) ' seconds']);
