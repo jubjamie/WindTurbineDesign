@@ -11,7 +11,7 @@ local_upper_power=0;
 upperbandv0=0;
 
 for vn=1:N
-    progressbar(vn/(N+1),[],[],[]);
+    progressbar((vn/(N)-0.01),[],[],[]);
     local_v=MinV0+((vn-0.5)*V0delta);
     
     if vn==1

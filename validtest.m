@@ -43,10 +43,10 @@ init_V0=20;
 init_theta=0.0733;
 init_R=19.5;
 
-[a, adash, phi, Cn, Ct,Vrel, tol, i]=WTInducedCalcs(init_a,init_adash,init_V0,w,init_R,init_theta,1,3);
+[a, adash, phi, Cn, Ct,Vrel, tol, i]=WTInducedCalcs(init_a,init_adash,init_V0,w,init_R,init_theta,1,3,logid,etol);
 %[a, adash, phi, Cn, Ct,Vrel, tol, i]=WTInducedCalcs(0, 0, 5.000000, 3.141593, 8.500000, 0.193245, 1.000000, 3.000000);
 %s1singletable=table(a, adash, phi, Cn, Ct, tol, i);
-statustablematrix([a, adash, phi, Cn, Ct,Vrel, tol, i],{'a', 'adash', 'phi', 'Cn', 'Ct','Vrel', 'tol', 'i'},'status/s1_singlevalidation.png','Section 1 Single Validation','None',1);
+statustablematrix([a, adash, phi, Cn, Ct,Vrel, tol, i],{'a', 'adash', 'phi', 'Cn', 'Ct','Vrel', 'tol', 'i'},'status/s1_singlevalidation.png','Section 1 Single Validation','figure',1);
 validS1metric=(a/0.0783)*100;
 if validS1metric>95 && validS1metric<105
     disp(['Single Radius Test Passed: ' num2str(validS1metric) '%']);
@@ -62,7 +62,7 @@ fprintf(logid,'\r\n---Section 2 Multi Node Rotor Test---\r\n');
 progressbar('Calculating Power', 'Solving Rotor', 'Finding Local Induced Flow', 'Optimisation');
 
 [MT, MN, S2] = WTSingleVelocity(20, 0.209, -0.00698, 0, 20 ,1, 3);
-statustablematrix(S2,{'r', 'a', 'adash', 'phi', 'Cn', 'Ct', 'tol', 'i','Vrel','Mt','Mn'},'status/s2_multivalidation.png','Section 2 Multi Validation','None',1);
+statustablematrix(S2,{'r', 'a', 'adash', 'phi', 'Cn', 'Ct', 'tol', 'i','Vrel','Mt','Mn'},'status/s2_multivalidation.png','Section 2 Multi Validation','figure',1);
 
 validS2metric=(S2(3,2)/0.088501)*100;
 if validS2metric>95 && validS2metric<105
@@ -80,7 +80,7 @@ progressbar('Calculating Power', 'Solving Rotor', 'Finding Local Induced Flow', 
 
 defaultBlade=[deg2rad(12), deg2rad(-0.4), 0];
 [total_diff, AEP, S3] = WTVelocityRange(defaultBlade, A, k, w, c_mean, 20, 1, 3, 5, 25);
-statustablematrix(S3,{'V0', 'Power', 'Probability', 'AEP', 'Ideal_AEP', 'Difference', 'Efficiency'},'status/s3_multivalidation.png','Section 3 Multi AEP Validation','None',1.3);
+statustablematrix(S3,{'V0', 'Power', 'Probability', 'AEP', 'Ideal_AEP', 'Difference', 'Efficiency'},'status/s3_multivalidation.png','Section 3 Multi AEP Validation','figure',1.3);
 
 validS3metric=(AEP/812670179)*100;
 if validS3metric>95 && validS3metric<105

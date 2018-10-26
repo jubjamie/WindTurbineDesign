@@ -2,7 +2,7 @@ function [Mtot_t, Mtot_n,S2,Power] = WTSingleVelocity(V0, Theta0, ThetaTwist, c_
 %2: WHOLE ROTOR - loop WTInducedCalcs to find the values for all radii,
 %then integrate these to get the normal and tangential moment at the blade
 %root.
-global Hhub dhub Rmin Rmax c_mean M_rootmax F_Ymax rho_blade EI_blade Vmin Vmax A k w logid
+global Hhub dhub Rmin Rmax c_mean M_rootmax F_Ymax rho_blade EI_blade Vmin Vmax A k w logid etol
 
 N=19; %set radius node count
 radius_delta=(TipRadius-RootRadius)/(N); %Increment in radius
@@ -11,13 +11,14 @@ S2=zeros(N,11); %Creat empty matrix to hold values
 c_mean_local=c_mean;
 logid_local=logid;
 w_local=w;
+etol_local=etol;
 
 parfor j=1:N
     progressbar([],j/(N+1),[],[]);
     local_radius=RootRadius+((j-1)*radius_delta)+(radius_delta/2); % Calculate local radius from centre increment TODO shorten this
     local_chord=c_mean_local+((local_radius-((TipRadius-RootRadius)/2))*c_grad); % Calculate tapered chord
     local_theta=Theta0+(local_radius*ThetaTwist);
-    [a_s1, adash_s1, phi_s1, Cn_s1, Ct_s1, Vrel, tol_s1, i_s1]=WTInducedCalcs(0,0,V0,w_local,local_radius,local_theta,local_chord,3,logid_local);
+    [a_s1, adash_s1, phi_s1, Cn_s1, Ct_s1, Vrel, tol_s1, i_s1]=WTInducedCalcs(0,0,V0,w_local,local_radius,local_theta,local_chord,3,logid_local,etol_local);
     if a_s1<0 || adash_s1<0
         %fprintf(logid_local,'S2 Negatives Detected: a=%f, adash=%f Calling function: WTSingleVelocity(%f, %f, %f, %f, %f,%f,%f)\r\n',a_s1, adash_s1,V0, Theta0, ThetaTwist, c_grad, TipRadius,RootRadius, B);
     end
