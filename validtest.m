@@ -24,7 +24,8 @@ A=7; k=1.8;
 w=30*2*pi/60; %rad/s
 
 %System Globals
-global maxiters logid
+global maxiters logid etol
+etol=0.0001;
 
 [logid,logpath]=createlog('Unit Validation Tests');
 fprintf(logid,'\r\n> > > Start < < <\r\n');

@@ -25,7 +25,8 @@ A=7; k=1.8;
 w=30*2*pi/60; %rad/s
 
 %System Globals
-global maxiters logid
+global maxiters logid etol
+etol=0.01;
 
 
 %% Part B Optimisation
@@ -33,8 +34,9 @@ global maxiters logid
 %WIP
 % Create Log File
 [logid, logpath]=createlog('Part B Optimiser');
+tic;
 
-maxiters=5;
+maxiters=40;
 progressbar('Calculating Power', 'Solving Rotor', 'Finding Local Induced Flow', 'Optimisation');
 %progressbar([],[],[], (1/maxiters));
 opts = optimset('fminsearch');
@@ -57,7 +59,9 @@ end
 
 statustablematrix(xdeg, {'Theta','Theta_Twist','c_grad'}, 'status/optSolSmall.png', 'Optimiser Results','print',1.5);
 
-runSolutionInput=questdlg('Parse solution through S3?','Yes','No');
+runtimer=toc;
+
+runSolutionInput=questdlg('Parse solution through S3?','Solution Viewer','Yes','No','No');
 switch runSolutionInput
     case 'Yes'
        run('lastSolution');
@@ -67,6 +71,10 @@ end
 
 
 %% Clean Up
+
+fprintf(logid,'\r\n> > > END < < <\r\n');
+fprintf(logid,'Tests Completed in %f seconds---\r\n',runtimer);
 progressbar(1,1,1,1);
 fclose(logid);
+disp(['Tests Completed in ' num2str(runtimer) ' seconds']);
 disp(['<a href = "../logs/' logpath '.log">Open Session Log</a>']);
