@@ -7,15 +7,22 @@ function [total_diff, AEP, S3] = WTVelocityRange(bladeConfig, A, k, omega, MeanC
 N=20; % Number of nodes to evaluate
 V0delta=(MaxV0-MinV0)/N; % Find the velocity delta for each node
 S3=zeros(N,7); %Create empty matrix for S3 results
+local_upper_power=0;
+upperbandv0=0;
 
 for vn=1:N
     progressbar(vn/(N+1),[],[],[]);
     local_v=MinV0+((vn-0.5)*V0delta);
     
-    %Band boundary cals - LOWER
-    lowerbandv0=MinV0+((vn-1)*V0delta);
-    [~,~,~,local_lower_power]=WTSingleVelocity(lowerbandv0, bladeConfig(1), bladeConfig(2), bladeConfig(3), TipRadius,RootRadius, B);
-    
+    if vn==1
+        %Band boundary cals - LOWER
+        lowerbandv0=MinV0+((vn-1)*V0delta);
+        [~,~,~,local_lower_power]=WTSingleVelocity(lowerbandv0, bladeConfig(1), bladeConfig(2), bladeConfig(3), TipRadius,RootRadius, B);
+    else
+        lowerbandv0=upperbandv0;
+        local_lower_power=local_upper_power;
+    end
+        
     %Band boundary cals - Upper
     upperbandv0=MinV0+(vn*V0delta);
     [~,~,~,local_upper_power]=WTSingleVelocity(upperbandv0, bladeConfig(1), bladeConfig(2), bladeConfig(3), TipRadius,RootRadius, B);
