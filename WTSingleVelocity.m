@@ -1,17 +1,17 @@
-function [Mtot_t, Mtot_n,S2,Power] = WTSingleVelocity(V0, Theta0, ThetaTwist, c_grad, TipRadius,RootRadius, B)
+function [Mtot_t, Mtot_n,S2,Power] = WTSingleVelocity(V0, Theta0, ThetaTwist, c_grad, TipRadius,RootRadius, B,globaldata)
 %2: WHOLE ROTOR - loop WTInducedCalcs to find the values for all radii,
 %then integrate these to get the normal and tangential moment at the blade
 %root.
-global Hhub dhub Rmin Rmax c_mean M_rootmax F_Ymax rho_blade EI_blade Vmin Vmax A k w logid etol
+%global Hhub dhub Rmin Rmax c_mean M_rootmax F_Ymax rho_blade EI_blade Vmin Vmax A k w logid etol
 
 N=19; %set radius node count
 radius_delta=(TipRadius-RootRadius)/(N); %Increment in radius
 S2=zeros(N,11); %Creat empty matrix to hold values
 
-c_mean_local=c_mean;
-logid_local=logid;
-w_local=w;
-etol_local=etol;
+c_mean_local=globaldata.c_mean;
+logid_local=globaldata.logid;
+w_local=globaldata.w;
+etol_local=globaldata.etol;
 
 for j=1:N
     progressbar([],j/(N+1),[],[]);
@@ -34,7 +34,7 @@ end
 
 Mtot_t=sum(S2(:,10));
 Mtot_n=sum(S2(:,11));
-Power=Mtot_t*B*w;
+Power=Mtot_t*B*globaldata.w;
 Cp=Power/(0.5*1.225*(pi*(TipRadius^2-RootRadius^2))*V0^3);
 %{
 if Cp<(16/27)

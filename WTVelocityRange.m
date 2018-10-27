@@ -1,4 +1,4 @@
-function [total_diff, AEP, S3] = WTVelocityRange(bladeConfig, A, k, omega, MeanChord, TipRadius, RootRadius, B, MinV0, MaxV0)
+function [total_diff, AEP, S3] = WTVelocityRange(bladeConfig, A, k, omega, MeanChord, TipRadius, RootRadius, B, MinV0, MaxV0,globaldata)
 %3: ANNUAL ENERGY - loop WTSingleVelocity to find the moments across the
 %entire velocity range. Combine this with the frequency information to get
 %the AEP.
@@ -13,7 +13,7 @@ powerHold=zeros(1,N+1);
 
 parfor pn=1:N
         lowerbandv0=MinV0+((pn-1)*V0delta);
-        [~,~,~,powerHold(1,pn)]=WTSingleVelocity(lowerbandv0, bladeConfig(1), bladeConfig(2), bladeConfig(3), TipRadius,RootRadius, B);
+        [~,~,~,powerHold(1,pn)]=WTSingleVelocity(lowerbandv0, bladeConfig(1), bladeConfig(2), bladeConfig(3), TipRadius,RootRadius, B,globaldata);
 end
 
 for vn=1:N
