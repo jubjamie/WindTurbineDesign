@@ -36,7 +36,7 @@ etol=0.01;
 [logid, logpath]=createlog('Part B Optimiser');
 tic;
 
-maxiters=25;
+maxiters=3;
 progressbar('Calculating Power', 'Solving Rotor', 'Finding Local Induced Flow', 'Optimisation');
 %progressbar([],[],[], (1/maxiters));
 opts = optimset('fminsearch');

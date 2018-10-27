@@ -13,7 +13,7 @@ logid_local=logid;
 w_local=w;
 etol_local=etol;
 
-parfor j=1:N
+for j=1:N
     progressbar([],j/(N+1),[],[]);
     local_radius=RootRadius+((j-1)*radius_delta)+(radius_delta/2); % Calculate local radius from centre increment TODO shorten this
     local_chord=c_mean_local+((local_radius-((TipRadius-RootRadius)/2))*c_grad); % Calculate tapered chord
