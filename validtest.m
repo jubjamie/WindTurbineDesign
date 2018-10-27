@@ -39,6 +39,7 @@ globaldata.Vmax=Vmax;
 globaldata.c_mean=c_mean;
 globaldata.Rmin=Rmin;
 globaldata.Rmax=Rmax;
+globaldata.B=3;
 
 tic;
 

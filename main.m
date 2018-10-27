@@ -26,41 +26,52 @@ w=30*2*pi/60; %rad/s
 
 %System Globals
 global maxiters logid etol
-etol=0.01;
+etol=0.0001;
 
 
 %% Part B Optimisation
 % Aim to minimise the difference returned by AEP S3 calcs
 %WIP
 % Create Log File
-[logid, logpath]=createlog('Part B Optimiser');
+[globaldata.logid, logpath]=createlog('Part B Optimiser');
+globaldata.etol=etol;
+globaldata.A=A;
+globaldata.k=k;
+globaldata.w=w;
+globaldata.Vmin=Vmin;
+globaldata.Vmax=Vmax;
+globaldata.c_mean=c_mean;
+globaldata.Rmin=Rmin;
+globaldata.Rmax=Rmax;
+globaldata.B=3;
 tic;
 
-maxiters=3;
+globaldata.maxiters=5;
 progressbar('Calculating Power', 'Solving Rotor', 'Finding Local Induced Flow', 'Optimisation');
 %progressbar([],[],[], (1/maxiters));
 opts = optimset('fminsearch');
 opts.Display = 'iter'; %What to display in command window
 opts.TolX = 0.0001; %Tolerance on the variation in the parameters
 opts.TolFun = 0.001; %Tolerance on the error
-opts.OutputFcn = @optMonitor; %Tolerance on the error
-opts.MaxIter = maxiters-1; %Max number of iterations
-[x, diff, exitflag] = fminsearchbnd(@aepCost, [deg2rad(2.5) deg2rad(-1) 0.3], [deg2rad(2) deg2rad(-2) 0], [deg2rad(20) deg2rad(-0.1) 0.9], opts);
+opts.OutputFcn = @(x,optimValues,state)optMonitor(x,optimValues,state,globaldata); %Tolerance on the error
+opts.MaxIter = globaldata.maxiters-1; %Max number of iterations
+[x, diff, exitflag] = fminsearchbnd(@(x)aepCost(x,globaldata), [deg2rad(2.5) deg2rad(-1) 0.3], [deg2rad(2) deg2rad(-2) 0], [deg2rad(20) deg2rad(-0.1) 0.9], opts);
 xdeg=[rad2deg(x(1)),rad2deg(x(2)),x(3)];
 if exitflag==1
     disp('Optimiser SOLVED.');
 elseif exitflag==0
-    disp(['Optimiser reached MAX iterations of ' num2str(maxiters) '. Most recent solution:']);
+    disp(['Optimiser reached MAX iterations of ' num2str(globaldata.maxiters) '. Most recent solution:']);
 elseif exitflag==-1
     disp('Optimiser has been stopped by an output function. Most recent solution;');
 else
     disp('Optimiser has been stopped unexpectedly. See the command window for possible errors. Most recent solution:');
 end
 
-statustablematrix(xdeg, {'Theta','Theta_Twist','c_grad'}, 'status/optSolSmall.png', 'Optimiser Results','print',1.5);
-
 runtimer=toc;
 
+statustablematrix(xdeg, {'Theta','Theta_Twist','c_grad'}, 'status/optSolSmall.png', 'Optimiser Results','print',1.5);
+
+%Ask if final run of result wanted.
 runSolutionInput=questdlg('Parse solution through S3?','Solution Viewer','Yes','No','No');
 switch runSolutionInput
     case 'Yes'
@@ -72,9 +83,9 @@ end
 
 %% Clean Up
 
-fprintf(logid,'\r\n> > > END < < <\r\n');
-fprintf(logid,'Tests Completed in %f seconds---\r\n',runtimer);
+fprintf(globaldata.logid,'\r\n> > > END < < <\r\n');
+fprintf(globaldata.logid,'Tests Completed in %f seconds---\r\n',runtimer);
 progressbar(1,1,1,1);
-fclose(logid);
+fclose(globaldata.logid);
 disp(['Tests Completed in ' num2str(runtimer) ' seconds']);
 disp(['<a href = "../logs/' logpath '.log">Open Session Log</a>']);

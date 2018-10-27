@@ -1,16 +1,14 @@
-function stop = optMonitor(x, optimValues,state)
+function stop = optMonitor(x, optimValues,state,globaldata)
 %OPTMONITOR Summary of this function goes here
 %   Detailed explanation goes here
-global maxiters etol
+
 currOptIt=double(optimValues.iteration)+1;
-currPos=currOptIt/maxiters;
-if currPos>0.5
-    etol=0.0001;
-end
+currPos=currOptIt/globaldata.maxiters;
+
 switch state
     case 'init'
         %disp('Optimiser booting');
-        progressbar([],[],[],(currOptIt/maxiters));
+        progressbar([],[],[],currPos);
     case 'iter'
         %New iteration
         %disp(['Iteration: ' num2str(currOptIt) '/' num2str(maxiters)]);
