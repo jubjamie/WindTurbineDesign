@@ -11,7 +11,7 @@ local_upper_power=0;
 upperbandv0=0;
 powerHold=zeros(1,N+1);
 
-parfor pn=1:N
+parfor pn=1:N+1
         lowerbandv0=MinV0+((pn-1)*V0delta);
         [~,~,~,powerHold(1,pn)]=WTSingleVelocity(lowerbandv0, bladeConfig(1), bladeConfig(2), bladeConfig(3), TipRadius,RootRadius, B,globaldata);
 end
