@@ -17,7 +17,7 @@ parfor pn=1:N+1
 end
 
 for vn=1:N
-    progressbar((vn/(N)-0.01),[],[],[]);
+    %progressbar((vn/(N)-0.01),[],[],[]);
     local_v=MinV0+((vn-0.5)*V0delta);
     lowerbandv0=MinV0+((vn-1)*V0delta);
     upperbandv0=lowerbandv0+V0delta;
