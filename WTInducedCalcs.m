@@ -1,7 +1,7 @@
-function [a_out, adash_out, phi_flow, Cn, Ct,Vrel,curr_tol, i] = WTInducedCalcs(a, adash, V0, omega, y, theta, Chord, B)
+function [a_out, adash_out, phi_flow, Cn, Ct,Vrel,curr_tol, i] = WTInducedCalcs(a, adash, V0, omega, y, theta, Chord, B,logid_local,etol_local)
 %1: SINGLE ELEMENT: use an iterative solution to find the values of a,
 %adash, phi, Cn and Ct at a particular radius.
-global logid etol
+%global logid etol
 
 %Convergence Settings
 %etol=0.01;
@@ -40,13 +40,13 @@ for i=1:looplimit
     else
         curr_tol=abs(a_out-a_in);
     end
-    if curr_tol>etol
+    if curr_tol>etol_local
         %See if a near boundaries
         a_in=(0.1*(a_out-a_in))+a_in;
         
         %Log adash loop limit
         if i==adash_looplimit
-            fprintf(logid,'S1 adash Limit Reached: a=%f, adash=%f Calling function: WTInducedCalcs(%f, %f, %f, %f, %f, %f, %f, %f)\r\n',a_out,adash_out,a, adash, V0, omega, y, theta, Chord, B);
+            %fprintf(logid_local,'S1 adash Limit Reached: a=%f, adash=%f Calling function: WTInducedCalcs(%f, %f, %f, %f, %f, %f, %f, %f)\r\n',a_out,adash_out,a, adash, V0, omega, y, theta, Chord, B);
         end
         
         if i<adash_looplimit
@@ -69,7 +69,7 @@ end
 
 if solfnd==false
     %disp(['Convergence failed and terminated after ' num2str(i) ' loops. Returning most recent values.']);
-    fprintf(logid,'S1 Loop Limit Reached: a=%f, adash=%f Calling function: WTInducedCalcs(%f, %f, %f, %f, %f, %f, %f, %f)\r\n',a_out,adash_out,a, adash, V0, omega, y, theta, Chord, B);
+    %fprintf(logid_local,'S1 Loop Limit Reached: a=%f, adash=%f Calling function: WTInducedCalcs(%f, %f, %f, %f, %f, %f, %f, %f)\r\n',a_out,adash_out,a, adash, V0, omega, y, theta, Chord, B);
 end
 
 end
