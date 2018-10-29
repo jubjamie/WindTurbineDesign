@@ -70,7 +70,8 @@ end
 runtimer=toc;
 
 statustablematrix(xdeg, {'Theta','Theta_Twist','c_grad'}, 'status/optSolSmall.png', 'Optimiser Results','print',1.5);
-
+fprintf(globaldata.logid,'\r\nFINAL SOLUTION\r\n');
+fprintf(globaldata.logid,'Theta: %f deg.  Theta tw: %f deg.  c_grad: %f\r\n',xdeg(1),xdeg(2),xdeg(3));
 %Ask if final run of result wanted.
 runSolutionInput=questdlg('Parse solution through S3?','Solution Viewer','Yes','No','No');
 switch runSolutionInput
@@ -87,5 +88,5 @@ fprintf(globaldata.logid,'\r\n> > > END < < <\r\n');
 fprintf(globaldata.logid,'Tests Completed in %f seconds---\r\n',runtimer);
 progressbar(1,1,1,1);
 fclose(globaldata.logid);
-disp(['Tests Completed in ' num2str(runtimer) ' seconds']);
+disp(['Core Completed in ' num2str(runtimer) ' seconds']);
 disp(['<a href = "../logs/' logpath '.log">Open Session Log</a>']);

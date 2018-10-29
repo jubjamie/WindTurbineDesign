@@ -14,7 +14,7 @@ w_local=globaldata.w;
 etol_local=globaldata.etol;
 
 for j=1:N
-    progressbar([],j/(N+1),[],[]);
+    %progressbar([],j/(N+1),[],[]);
     local_radius=RootRadius+((j-1)*radius_delta)+(radius_delta/2); % Calculate local radius from centre increment TODO shorten this
     local_chord=c_mean_local+((local_radius-((TipRadius-RootRadius)/2))*c_grad); % Calculate tapered chord
     local_theta=Theta0+(local_radius*ThetaTwist);
