@@ -1,4 +1,4 @@
-function [a_out, adash_out, phi_flow, Cn, Ct,Vrel,curr_tol, i] = WTInducedCalcs(a, adash, V0, omega, y, theta, Chord, B,logid_local,etol_local)
+function [a_out, adash_out, phi_flow, Cn, Ct,Vrel,curr_tol, i] = WTInducedCalcs(a, adash, V0, omega, y, theta, Chord, B,logid_local,etol_local,TipRadius)
 %1: SINGLE ELEMENT: use an iterative solution to find the values of a,
 %adash, phi, Cn and Ct at a particular radius.
 %global logid etol
@@ -30,8 +30,12 @@ for i=1:looplimit
     Cn=(Cl*cos(phi_flow))+(Cd*sin(phi_flow));
     Ct=(Cl*sin(phi_flow))-(Cd*cos(phi_flow));
     
-    a_out=1/(((4*((sin(phi_flow))^2))/(solidity*Cn))+1);
-    adash_out=1/(((4*(sin(phi_flow)*cos(phi_flow)))/(solidity*Ct))-1);
+    %Tip Losses
+    f=(B*(TipRadius-y))/(2*y*sin(phi_flow));
+    F=(2/pi)*acos(exp(-f));
+    
+    a_out=1/(((4*F*((sin(phi_flow))^2))/(solidity*Cn))+1);
+    adash_out=1/(((4*F*(sin(phi_flow)*cos(phi_flow)))/(solidity*Ct))-1);
     
     
     %Test for convergance
