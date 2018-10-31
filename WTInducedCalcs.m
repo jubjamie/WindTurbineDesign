@@ -9,6 +9,7 @@ curr_tol=1;
 solfnd=false;
 looplimit=500;
 adash_looplimit=150;
+relax_looplimit=50;
 
 solidity=(B*Chord)/(2*pi*y);
 
@@ -21,6 +22,10 @@ for i=1:looplimit
     
     phi_flow=atan(((1-a_in)*V0)/((1+adash_in)*omega*y)); %Calculate phi flow angle
     alpha=phi_flow-theta; %Calculate alpha
+    if isreal(alpha~=1)
+    phi_flow
+    theta
+    end
     
     Vrel=((V0*(1-a_in))^2 + (omega*y*(1+adash_in))^2)^0.5; %Find relative velocity  the airfoil sees
     re=RE(1.225,Vrel,Chord,1.81e-5); %Calculate Reynolds Number
@@ -45,8 +50,13 @@ for i=1:looplimit
         curr_tol=abs(a_out-a_in);
     end
     if curr_tol>etol_local
+        if(i<relax_looplimit)
+            k=1;
+        else
+            k=0.1;
+        end
         %See if a near boundaries
-        a_in=(0.1*(a_out-a_in))+a_in;
+        a_in=(k*(a_out-a_in))+a_in;
         
         %Log adash loop limit
         if i==adash_looplimit
@@ -55,7 +65,7 @@ for i=1:looplimit
         
         if i<adash_looplimit
             %See if adash near boundaries
-            adash_in=(0.05*(adash_out-adash_in))+adash_in;
+            adash_in=(k*(adash_out-adash_in))+adash_in;
             
         else
             adash_in=0;
