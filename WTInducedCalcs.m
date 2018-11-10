@@ -22,9 +22,11 @@ for i=1:looplimit
     
     phi_flow=atan(((1-a_in)*V0)/((1+adash_in)*omega*y)); %Calculate phi flow angle
     alpha=phi_flow-theta; %Calculate alpha
-    if isreal(alpha~=1)
-    phi_flow
-    theta
+    if ~isreal(alpha)
+        a_in=a_in*0.9;
+     	adash_in=adash_in*0.9;
+        %disp('Non-real Alpha Mitigated');
+        continue
     end
     
     Vrel=((V0*(1-a_in))^2 + (omega*y*(1+adash_in))^2)^0.5; %Find relative velocity  the airfoil sees

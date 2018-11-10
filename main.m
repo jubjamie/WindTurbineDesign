@@ -55,7 +55,7 @@ opts.TolX = 0.0001; %Tolerance on the variation in the parameters
 opts.TolFun = 1e4; %Tolerance on the error
 opts.OutputFcn = @(x,optimValues,state)optMonitor(x,optimValues,state,globaldata); %Tolerance on the error
 opts.MaxIter = globaldata.maxiters-1; %Max number of iterations
-[x, diff, exitflag] = fminsearchbnd(@(x)aepCost(x,globaldata), [deg2rad(20) deg2rad(-0.5) 0], [deg2rad(2) deg2rad(-2) -0.1], [deg2rad(20) deg2rad(-0.1) 0], opts);
+[x, diff, exitflag] = fminsearchbnd(@(x)aepCost(x,globaldata), [deg2rad(12) deg2rad(-0.5) 0], [deg2rad(2) deg2rad(-2) -0.1], [deg2rad(20) deg2rad(-0.1) 0], opts);
 xdeg=[rad2deg(x(1)),rad2deg(x(2)),x(3)];
 if exitflag==1
     disp('Optimiser SOLVED.');
