@@ -12,7 +12,7 @@ upperbandv0=0;
 powerHold=zeros(1,N+1);
 momentHold=zeros(1,N+1);
 
-for pn=1:N+1
+parfor pn=1:N+1
         lowerbandv0=MinV0+((pn-1)*V0delta);
         [~,momentHold(1,pn),~,powerHold(1,pn)]=WTSingleVelocity(lowerbandv0, bladeConfig(1), bladeConfig(2), bladeConfig(3), TipRadius,RootRadius, B,globaldata);
 end
@@ -38,7 +38,12 @@ for vn=1:N
     %[~,~,~,local_upper_power]=WTSingleVelocity(upperbandv0, bladeConfig(1), bladeConfig(2), bladeConfig(3), TipRadius,RootRadius, B);
     
     %Find node power as mean of boundary values
+    if(max(momentHold)>globaldata.M_rootmax)
+        local_power=0;
+        disp(['Moment Limit Exceeded: ' num2str(max(momentHold))]);
+    else
     local_power=0.5*(powerHold(1,vn)+powerHold(1,vn+1));
+    end
     local_prob=windProb(A,k,lowerbandv0,upperbandv0);
     
     local_ideal_power=(0.5*1.225*(pi*(TipRadius^2-RootRadius^2))*local_v^3)*(16/27); % Ideal power using Betz limit.
@@ -48,12 +53,6 @@ for vn=1:N
     local_diff=local_AEP_ideal-local_AEP;
     local_eff=local_AEP/local_AEP_ideal;
     
-    % Punish solutions that break constraints with high gradient multipliers
-    if(all(momentHold<globaldata.M_rootmax)==0)
-       % If any total momentum exceeds limit punish AEP
-       local_AEP=local_AEP*1e-6;
-       disp(['Moment Limit Exceeded: ' num2str(max(momentHold))]);
-    end
     
     S3(vn,:)=[local_v, local_power, local_prob, local_AEP, local_AEP_ideal, local_diff, local_eff];
 end
