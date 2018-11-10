@@ -10,10 +10,11 @@ S3=zeros(N,7); %Create empty matrix for S3 results
 local_upper_power=0;
 upperbandv0=0;
 powerHold=zeros(1,N+1);
+momentHold=zeros(1,N+1);
 
 for pn=1:N+1
         lowerbandv0=MinV0+((pn-1)*V0delta);
-        [~,~,~,powerHold(1,pn)]=WTSingleVelocity(lowerbandv0, bladeConfig(1), bladeConfig(2), bladeConfig(3), TipRadius,RootRadius, B,globaldata);
+        [~,momentHold(1,pn),~,powerHold(1,pn)]=WTSingleVelocity(lowerbandv0, bladeConfig(1), bladeConfig(2), bladeConfig(3), TipRadius,RootRadius, B,globaldata);
 end
 
 for vn=1:N
@@ -46,6 +47,13 @@ for vn=1:N
     local_AEP_ideal=local_ideal_power*local_prob*8760;
     local_diff=local_AEP_ideal-local_AEP;
     local_eff=local_AEP/local_AEP_ideal;
+    
+    % Punish solutions that break constraints with high gradient multipliers
+    if(all(momentHold<globaldata.M_rootmax)==0)
+       % If any total momentum exceeds limit punish AEP
+       local_AEP=local_AEP*1e-6;
+       disp(['Moment Limit Exceeded: ' num2str(max(momentHold))]);
+    end
     
     S3(vn,:)=[local_v, local_power, local_prob, local_AEP, local_AEP_ideal, local_diff, local_eff];
 end

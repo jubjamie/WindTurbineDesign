@@ -7,6 +7,12 @@ function [Mtot_t, Mtot_n,S2,Power] = WTSingleVelocity(V0, Theta0, ThetaTwist, c_
 N=19; %set radius node count
 radius_delta=(TipRadius-RootRadius)/(N); %Increment in radius
 S2=zeros(N,11); %Creat empty matrix to hold values
+bending_theta_y=zeros(1,N);
+bending_theta_z=zeros(1,N);
+ky=zeros(1,N);
+kz=zeros(1,N);
+uy=zeros(1,N);
+uz=zeros(1,N);
 
 c_mean_local=globaldata.c_mean;
 logid_local=globaldata.logid;
@@ -25,13 +31,33 @@ for j=1:N
     
     
     %Calculate each moment
-    %Mt=(0.5*1.225*local_chord*Ct_s1*Vrel^2)*radius_delta*local_radius;
-    %Mn=(0.5*1.225*local_chord*Cn_s1*Vrel^2)*radius_delta*local_radius;
-    S2(j,:)=[local_radius, a_s1, adash_s1, phi_s1, Cn_s1, Ct_s1, tol_s1, i_s1,Vrel,((0.5*1.225*local_chord*Ct_s1*Vrel^2)*radius_delta*local_radius),((0.5*1.225*local_chord*Cn_s1*Vrel^2)*radius_delta*local_radius)];
+    Mt=(0.5*1.225*local_chord*Ct_s1*Vrel^2)*radius_delta*local_radius;
+    Mn=(0.5*1.225*local_chord*Cn_s1*Vrel^2)*radius_delta*local_radius;
+    S2(j,:)=[local_radius, a_s1, adash_s1, phi_s1, Cn_s1, Ct_s1, tol_s1, i_s1,Vrel,Mt,Mn];
     %S2(j,9:11)=[Vrel,Mt,Mn];
-    
+    M1=Mt*cos(local_theta)-Mn*sin(local_theta);
+    M2=Mt*sin(local_theta)+Mn*cos(local_theta);
+    k1=M1/EIcalc(local_chord);
+    k2=M2/EIcalc(local_chord);
+    ky(1,j)=k1*cos(local_theta)+k2*sin(local_theta);
+    kz(1,j)=-k1*sin(local_theta)+k2*cos(local_theta);
+    if j>1
+    % i.e. at N=1 leave as zero
+    % Calculate bending angles
+    bending_theta_y(1,j)=bending_theta_y(1,j-1)...
+            +0.5*(ky(1,j-1)+ky(1,j))*radius_delta;
+    bending_theta_z(1,j)=bending_theta_z(1,j-1)...
+            +0.5*(kz(1,j-1)+kz(1,j))*radius_delta;
+        
+    % Calculate deflections.
+    uy(1,j)=uy(1,j-1)+(bending_theta_z(1,j-1)*radius_delta)+(((kz(1,j)/6)+(kz(1,j-1)/3))*radius_delta^2);
+    uz(1,j)=uz(1,j-1)+(bending_theta_y(1,j-1)*radius_delta)+(((ky(1,j)/6)+(ky(1,j-1)/3))*radius_delta^2);
+        
+    end
 end
 
+uy
+uz
 Mtot_t=sum(S2(:,10));
 Mtot_n=sum(S2(:,11));
 Power=Mtot_t*B*globaldata.w;
