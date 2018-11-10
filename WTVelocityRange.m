@@ -43,9 +43,9 @@ for vn=1:N
     if(max(momentHold)>globaldata.M_rootmax)
         local_power=0;
         disp(['Moment Limit Exceeded: ' num2str(max(momentHold))]);
-    elseif(max(def_yHold)>3 || max(def_zHold)>3)
+    elseif(abs(min(def_zHold))>3)
         local_power=0;
-        disp(['Deflections Exceeded - y: ' num2str(max(def_yHold)) ' >< z: ' num2str(max(def_zHold))]);
+        disp(['Deflections Exceeded - z: ' num2str(abs(min(def_zHold)))]);
     else
     local_power=0.5*(powerHold(1,vn)+powerHold(1,vn+1));
     end

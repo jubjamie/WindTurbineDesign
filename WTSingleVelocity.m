@@ -6,7 +6,7 @@ function [Mtot_t, Mtot_n,S2,Power,def_max_y,def_max_z] = WTSingleVelocity(V0, Th
 
 N=19; %set radius node count
 radius_delta=(TipRadius-RootRadius)/(N); %Increment in radius
-S2=zeros(N,11); %Creat empty matrix to hold values
+S2=zeros(N,13); %Creat empty matrix to hold values
 
 c_mean_local=globaldata.c_mean;
 logid_local=globaldata.logid;
@@ -27,40 +27,40 @@ for j=1:N
     %Calculate each moment
     Mt=(0.5*1.225*local_chord*Ct_s1*Vrel^2)*radius_delta*local_radius;
     Mn=(0.5*1.225*local_chord*Cn_s1*Vrel^2)*radius_delta*local_radius;
-    S2(j,:)=[local_radius, a_s1, adash_s1, phi_s1, Cn_s1, Ct_s1, tol_s1, i_s1,Vrel,Mt,Mn];
-    %S2(j,9:11)=[Vrel,Mt,Mn];
-    %{
-    M1=Mt*cos(local_theta)-Mn*sin(local_theta);
-    M2=Mt*sin(local_theta)+Mn*cos(local_theta);
-    k1=M1/EIcalc(local_chord);
-    k2=M2/EI2calc(local_chord);
-    ky(1,j)=k1*cos(local_theta)+k2*sin(local_theta);
-    kz(1,j)=-k1*sin(local_theta)+k2*cos(local_theta);
-    if j>1
-    % i.e. at N=1 leave as zero
-    % Calculate bending angles
-    bending_theta_y(1,j)=bending_theta_y(1,j-1)...
-            +0.5*(ky(1,j-1)+ky(1,j))*radius_delta;
-    bending_theta_z(1,j)=bending_theta_z(1,j-1)...
-            +0.5*(kz(1,j-1)+kz(1,j))*radius_delta;
-        
-    % Calculate deflections.
-    uy(1,j)=uy(1,j-1)+(bending_theta_z(1,j-1)*radius_delta)+(((kz(1,j)/6)+(kz(1,j-1)/3))*radius_delta^2);
-    uz(1,j)=uz(1,j-1)+(bending_theta_y(1,j-1)*radius_delta)+(((ky(1,j)/6)+(ky(1,j-1)/3))*radius_delta^2);
-        
-    end
-    %}
+    pt=Mt/(radius_delta*local_radius);
+    pn=Mn/(radius_delta*local_radius);
+    S2(j,:)=[local_radius, a_s1, adash_s1, phi_s1, Cn_s1, Ct_s1, tol_s1, i_s1,Vrel,Mt,Mn,pt,pn];
+
 end
 
+
+Ty=zeros(1,N+1);
+Tz=zeros(1,N+1);
 My=zeros(1,N+1);
 Mz=zeros(1,N+1);
-for p=N:-1:2
-    % Interp Momentum at each node
-    My(1,p)=My(1,p+1)+(1/2*(S2(p,10)+S2(p-1,10)));
-    Mz(1,p)=Mz(1,p+1)+(1/2*(S2(p,11)+S2(p-1,11)));
+for p=N:-1:3
+    % Interp Forces at each node
+    force_y_p=(1/2*(S2(p,12)+S2(p-1,12)));
+    force_y_p1=(1/2*(S2(p-1,12)+S2(p-2,12)));
+    force_z_p=(1/2*(S2(p,13)+S2(p-1,13)));
+    force_z_p1=(1/2*(S2(p-1,13)+S2(p-2,13)));
+    Ty(p)=Ty(p+1)+(S2(p,12)*radius_delta);
+    Tz(p)=Tz(p+1)+(S2(p,13)*radius_delta);
+    My(1,p)=My(1,p+1)-(radius_delta*Tz(p+1))-((force_z_p1/6)+(force_z_p/3))*radius_delta^2;
+    Mz(1,p)=Mz(1,p+1)+(radius_delta*Ty(p+1))+((force_y_p1/6)+(force_y_p/3))*radius_delta^2;
 end
-    My(1,1)=My(1,2)+S2(1,10);
-    Mz(1,1)=Mz(1,2)+S2(1,11);
+
+% For nodes 1 and two use central approximations.
+for p=2:-1:1
+    force_y_p=S2(p,12);
+    force_y_p1=S2(max(p-1,1),12);
+    force_z_p=S2(p,13);
+    force_z_p1=S2(max(p-1,1),13);
+    Ty(p)=Ty(p+1)+(S2(p,12)*radius_delta);
+    Tz(p)=Tz(p+1)+(S2(p,13)*radius_delta);
+    My(1,p)=My(1,p+1)-(radius_delta*Tz(p+1))-((force_z_p1/6)+(force_z_p/3))*radius_delta^2;
+    Mz(1,p)=Mz(1,p+1)+(radius_delta*Ty(p+1))+((force_y_p1/6)+(force_y_p/3))*radius_delta^2;
+end
 
 % M1s and M2s
 node_thetas=linspace(Theta0,Theta0+((TipRadius-RootRadius)*ThetaTwist),N+1);
