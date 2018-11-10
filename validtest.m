@@ -55,7 +55,7 @@ init_V0=20;
 init_theta=0.0733;
 init_R=19.5;
 
-[a, adash, phi, Cn, Ct,Vrel, tol, i]=WTInducedCalcs(init_a,init_adash,init_V0,globaldata.w,init_R,init_theta,1,3,globaldata.logid,globaldata.etol);
+[a, adash, phi, Cn, Ct,Vrel, tol, i]=WTInducedCalcs(init_a,init_adash,init_V0,globaldata.w,init_R,init_theta,1,3,globaldata.logid,globaldata.etol,20);
 %[a, adash, phi, Cn, Ct,Vrel, tol, i]=WTInducedCalcs(0, 0, 5.000000, 3.141593, 8.500000, 0.193245, 1.000000, 3.000000);
 %s1singletable=table(a, adash, phi, Cn, Ct, tol, i);
 statustablematrix([a, adash, phi, Cn, Ct,Vrel, tol, i],{'a', 'adash', 'phi', 'Cn', 'Ct','Vrel', 'tol', 'i'},'status/s1_singlevalidation.png','Section 1 Single Validation','figure',1);
