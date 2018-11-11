@@ -18,15 +18,7 @@ for i=1:looplimit
     
     phi_flow=atan(((1-a_in)*V0)/((1+adash_in)*omega*y)); %Calculate phi flow angle
     alpha=phi_flow-theta; %Calculate alpha
-    if ~isreal(alpha)
-        % Sometimes alpha goes imaginary.
-        % Relax a/a' to stop this from happening.
-        % Acts as a ForceCoef error catcher too.
-        a_in=a_in*0.9;
-        adash_in=adash_in*0.9;
-        continue
-    end
-    
+
     Vrel=((V0*(1-a_in))^2 + (omega*y*(1+adash_in))^2)^0.5; %Find relative velocity  the airfoil sees
     re=RE(1.225,Vrel,Chord,1.81e-5); %Calculate Reynolds Number
     [Cl, Cd]=ForceCoefficient(alpha,re); %Calculate/Look Up Cl,Cd
@@ -62,6 +54,10 @@ for i=1:looplimit
         end
         %See if a near boundaries
         a_in=(k*(a_out-a_in))+a_in;
+        if a_in>1
+            a_in=1;
+            disp('Resetting a to 1');
+        end
         
         %Log adash loop limit
         if i==adash_looplimit
