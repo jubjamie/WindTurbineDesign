@@ -49,7 +49,7 @@ end
 runtimer=toc;
 
 progressbar(1);
-statustablematrix(xdeg, {'Theta','Theta_Twist','c_grad'}, 'status/optSolSmall.png', 'Optimiser Results','print',1.5);
+statustablematrix(xdeg, {'Theta','Theta_Twist','c_grad'}, 'status/optSolSmall.png', 'Optimiser Results','print',1.2);
 fprintf(globaldata.logid,'\r\nFINAL SOLUTION\r\n');
 fprintf(globaldata.logid,'Theta: %f deg.  Theta tw: %f deg.  c_grad: %f\r\n',xdeg(1),xdeg(2),xdeg(3));
 %Ask if final run of result wanted.
