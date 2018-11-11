@@ -2,7 +2,6 @@ function [Mtot_t, Mtot_n,S2,Power,def_max_y,def_max_z] = WTSingleVelocity(V0, Th
 %2: WHOLE ROTOR - loop WTInducedCalcs to find the values for all radii,
 %then integrate these to get the normal and tangential moment at the blade
 %root.
-%global Hhub dhub Rmin Rmax c_mean M_rootmax F_Ymax rho_blade EI_blade Vmin Vmax A k w logid etol
 
 N=19; %set radius node count
 radius_delta=(TipRadius-RootRadius)/(N); %Increment in radius

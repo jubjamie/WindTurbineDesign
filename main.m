@@ -5,46 +5,22 @@ p=genpath('lib');addpath(p);p=genpath('status');addpath(p);
 progressbar('Calculating Power', 'Solving Rotor', 'Finding Local Induced Flow', 'Optimisation');
 
 
-%---Set Global Constants---%
-%Define globals from cw sheets (see /docs)
-%Dimensions (m)
-global Hhub dhub Rmin Rmax c_mean;
-Hhub=35; dhub=3; Rmin=1; Rmax=20; c_mean=1;
-
-%Forces
-global M_rootmax F_Ymax;
-M_rootmax=0.5e6; %Nm
-F_Ymax=70000; %N
-
-%Quantities
-global rho_blade EI_blade Vmin Vmax A k w;
-rho_blade=2000; %kg/m3
-EI_blade=40e9 * (c_mean*(0.2*c_mean)^3)/12; %TEMP - GPA
-Vmin=5; Vmax=25; %m/s
-A=7; k=1.8;
-w=30*2*pi/60; %rad/s
-
-%System Globals
-global maxiters logid etol
-etol=0.0001;
-
-
 %% Part B Optimisation
 % Aim to minimise the difference returned by AEP S3 calcs
 %WIP
 % Create Log File
 [globaldata.logid, logpath]=createlog('Part B Optimiser');
-globaldata.etol=etol;
-globaldata.A=A;
-globaldata.k=k;
-globaldata.w=w;
-globaldata.Vmin=Vmin;
-globaldata.Vmax=Vmax;
-globaldata.c_mean=c_mean;
-globaldata.Rmin=Rmin;
-globaldata.Rmax=Rmax;
+globaldata.etol=0.0001;
+globaldata.A=7;
+globaldata.k=1.8;
+globaldata.w=30*2*pi/60;
+globaldata.Vmin=5;
+globaldata.Vmax=25;
+globaldata.c_mean=1;
+globaldata.Rmin=1;
+globaldata.Rmax=20;
 globaldata.B=3;
-globaldata.M_rootmax=M_rootmax;
+globaldata.M_rootmax=0.5e6;
 tic;
 
 globaldata.maxiters=250;
