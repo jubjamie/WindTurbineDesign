@@ -43,12 +43,13 @@ for vn=1:N
     
     if(max(momentHold)>globaldata.M_rootmax && globaldata.flags.overrideLimits==false)
         local_power=0;
-        %disp(['Moment Limit Exceeded: ' num2str(max(momentHold))]);
-    elseif(abs(min(def_zHold))>3 && globaldata.flags.overrideLimits==false)
+        disp(['Moment Limit Exceeded: ' num2str(max(momentHold))]);
+    elseif(abs(def_zHold(end))>3 && globaldata.flags.overrideLimits==false)
         local_power=0;
-        %disp(['Deflections Exceeded - z: ' num2str(abs(min(def_zHold)))]);
+        %disp(['Deflections Exceeded - z: ' num2str(abs(def_zHold(end)))]);
     else
     local_power=0.5*(powerHold(1,vn)+powerHold(1,vn+1));
+    %disp(['Deflections Exceeded - z: ' num2str(abs(def_zHold(end)))]);
     end
     local_prob=windProb(A,k,lowerbandv0,upperbandv0);
     
