@@ -73,7 +73,6 @@ for i=1:looplimit
     else
         %If within tollerance then break out and return
         solfnd=true;
-        progressbar([],[],1,[]);
         break
     end
     

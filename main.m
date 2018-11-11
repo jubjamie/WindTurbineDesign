@@ -64,7 +64,7 @@ end
 
 fprintf(globaldata.logid,'\r\n> > > END < < <\r\n');
 fprintf(globaldata.logid,'Tests Completed in %f seconds---\r\n',runtimer);
-progressbar(1,1,1,1);
+progressbar(1);
 fclose(globaldata.logid);
 disp(['Core Completed in ' num2str(runtimer) ' seconds']);
 disp(['<a href = "../logs/' logpath '.log">Open Session Log</a>']);
