@@ -10,9 +10,9 @@ Latest optimiser solution.
 <p align="center">
 <img src="status/optSol.png?raw=true" />
 </p>
-#### Current AEP Power Profile
+Current AEP Power Profile
 <p align="center">
-<img src="status/pwoerLastSolution.png?raw=true" />
+<img src="status/powerLastSolution.png?raw=true" />
 </p>
 
 ### Section 1 Single Validation Results
