@@ -7,9 +7,14 @@ statustablematrix([xdeg(1), xdeg(2), xdeg(3), AEP,IAEP,(IAEP-AEP),(AEP/IAEP)],{'
 % Plot graph of powers.
 %S3-1 vs S3-2
 f6=figure(6);
-plot(S3(:,1),(S3(:,4)./1e6),'-b');
+
+[v0s,powers]=quickInterp(S3(:,1),S3(:,4),'start',globaldata.Vmin);
+[v0s,powers]=quickInterp(v0s,powers,'end',globaldata.Vmax);
+plot(v0s,(powers./1e6),'-b');
 hold on;
-plot(S3(:,1),(S3(:,5)./1e6),'-r');
+[v0s,powers]=quickInterp(S3(:,1),S3(:,5),'start',globaldata.Vmin);
+[v0s,powers]=quickInterp(v0s,powers,'end',globaldata.Vmax);
+plot(v0s,(powers./1e6),'-r');
 grid
 xlabel('Wind Speed (m/s)');
 ylabel('Power x Probability (MW)');
@@ -34,7 +39,10 @@ globaldata.flags.overrideLimits=true;
 globaldata.flags.tiploss=true;
 globaldata.flags.overrideLimits=false;
 
-plot(S3_ntl(:,1),(S3_ntl(:,4)./1e6),'--c');
+[v0s,powers]=quickInterp(S3_ntl(:,1),S3_ntl(:,4),'start',globaldata.Vmin);
+[v0s,powers]=quickInterp(v0s,powers,'end',globaldata.Vmax);
+
+plot(v0s,(powers./1e6),'--c');
 legend({'Found Solution', 'Ideal AEP Solution','Tip Losses Neglected'},...
     'Location','Northeast','Interpreter','latex','FontSize',12);
 
