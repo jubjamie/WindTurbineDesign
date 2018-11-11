@@ -45,8 +45,8 @@ for p=N:-1:3
     force_z_p1=(1/2*(S2(p-1,13)+S2(p-2,13)));
     Ty(p)=Ty(p+1)+(S2(p,12)*radius_delta);
     Tz(p)=Tz(p+1)+(S2(p,13)*radius_delta);
-    My(1,p)=My(1,p+1)-(radius_delta*Tz(p+1))-((force_z_p1/6)+(force_z_p/3))*radius_delta^2;
-    Mz(1,p)=Mz(1,p+1)+(radius_delta*Ty(p+1))+((force_y_p1/6)+(force_y_p/3))*radius_delta^2;
+    My(p)=My(1,p+1)-(radius_delta*Tz(p+1))-((force_z_p1/6)+(force_z_p/3))*radius_delta^2;
+    Mz(p)=Mz(1,p+1)+(radius_delta*Ty(p+1))+((force_y_p1/6)+(force_y_p/3))*radius_delta^2;
 end
 
 % For nodes 1 and two use central approximations.
@@ -57,8 +57,8 @@ for p=2:-1:1
     force_z_p1=S2(max(p-1,1),13);
     Ty(p)=Ty(p+1)+(S2(p,12)*radius_delta);
     Tz(p)=Tz(p+1)+(S2(p,13)*radius_delta);
-    My(1,p)=My(1,p+1)-(radius_delta*Tz(p+1))-((force_z_p1/6)+(force_z_p/3))*radius_delta^2;
-    Mz(1,p)=Mz(1,p+1)+(radius_delta*Ty(p+1))+((force_y_p1/6)+(force_y_p/3))*radius_delta^2;
+    My(p)=My(1,p+1)-(radius_delta*Tz(p+1))-((force_z_p1/6)+(force_z_p/3))*radius_delta^2;
+    Mz(p)=Mz(1,p+1)+(radius_delta*Ty(p+1))+((force_y_p1/6)+(force_y_p/3))*radius_delta^2;
 end
 
 % M1s and M2s
@@ -80,13 +80,13 @@ deflection_distance_z=zeros(1,N+1);
 
 for q=1:N
     % deflection angle
-    deflection_angles_y(1,q+1)=deflection_angles_y(1,q)+0.5*(ky(1,q+1)+ky(1,q))*radius_delta;
-    deflection_angles_z(1,q+1)=deflection_angles_z(1,q)+0.5*(kz(1,q+1)+kz(1,q))*radius_delta;
+    deflection_angles_y(q+1)=deflection_angles_y(1,q)+0.5*(ky(1,q+1)+ky(1,q))*radius_delta;
+    deflection_angles_z(q+1)=deflection_angles_z(1,q)+0.5*(kz(1,q+1)+kz(1,q))*radius_delta;
     % Deflection amount
-    deflection_distance_y(1,q+1)=deflection_distance_y(1,q)+...
+    deflection_distance_y(q+1)=deflection_distance_y(1,q)+...
                                  deflection_angles_z(1,q)*radius_delta+...
                                  ((kz(q+1)/6)+(kz(q)/3))*radius_delta^2;
-     deflection_distance_z(1,q+1)=deflection_distance_z(1,q)+...
+     deflection_distance_z(q+1)=deflection_distance_z(1,q)+...
                                  deflection_angles_y(1,q)*radius_delta+...
                                  ((ky(q+1)/6)+(ky(q)/3))*radius_delta^2;
 end
