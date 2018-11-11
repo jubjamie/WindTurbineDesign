@@ -1,4 +1,4 @@
-function [a_out, adash_out, phi_flow, Cn, Ct,Vrel,curr_tol, i] = WTInducedCalcs(a, adash, V0, omega, y, theta, Chord, B,logid_local,etol_local,TipRadius)
+function [a_out, adash_out, phi_flow, Cn, Ct,Vrel,curr_tol, i] = WTInducedCalcs(a, adash, V0, omega, y, theta, Chord, B,logid_local,etol_local,TipRadius,globaldata)
 %1: SINGLE ELEMENT: use an iterative solution to find the values of a,
 %adash, phi, Cn and Ct at a particular radius.
 
@@ -15,13 +15,15 @@ a_in=a;
 adash_in=adash;
 
 for i=1:looplimit
-
+    
     phi_flow=atan(((1-a_in)*V0)/((1+adash_in)*omega*y)); %Calculate phi flow angle
     alpha=phi_flow-theta; %Calculate alpha
     if ~isreal(alpha)
+        % Sometimes alpha goes imaginary.
+        % Relax a/a' to stop this from happening.
+        % Acts as a ForceCoef error catcher too.
         a_in=a_in*0.9;
-     	adash_in=adash_in*0.9;
-        %disp('Non-real Alpha Mitigated');
+        adash_in=adash_in*0.9;
         continue
     end
     
@@ -33,12 +35,17 @@ for i=1:looplimit
     Cn=(Cl*cos(phi_flow))+(Cd*sin(phi_flow));
     Ct=(Cl*sin(phi_flow))-(Cd*cos(phi_flow));
     
-    %Tip Losses
-    f=(B*(TipRadius-y))/(2*y*sin(phi_flow));
-    F=(2/pi)*acos(exp(-f));
-    
-    a_out=1/(((4*F*((sin(phi_flow))^2))/(solidity*Cn))+1);
-    adash_out=1/(((4*F*(sin(phi_flow)*cos(phi_flow)))/(solidity*Ct))-1);
+    if(globaldata.flags.tiploss==true)
+        %Tip Losses
+        f=(B*(TipRadius-y))/(2*y*sin(phi_flow));
+        F=(2/pi)*acos(exp(-f));
+        
+        a_out=1/(((4*F*((sin(phi_flow))^2))/(solidity*Cn))+1);
+        adash_out=1/(((4*F*(sin(phi_flow)*cos(phi_flow)))/(solidity*Ct))-1);
+    else
+        a_out=1/(((4*((sin(phi_flow))^2))/(solidity*Cn))+1);
+        adash_out=1/(((4*(sin(phi_flow)*cos(phi_flow)))/(solidity*Ct))-1);
+    end
     
     
     %Test for convergance

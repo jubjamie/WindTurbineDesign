@@ -7,7 +7,7 @@ progressbar('Calculating Power', 'Solving Rotor', 'Finding Local Induced Flow', 
 
 %% Part B Optimisation
 % Aim to minimise the difference returned by AEP S3 calcs
-%WIP
+globaldata=[];
 % Create Log File
 [globaldata.logid, logpath]=createlog('Part B Optimiser');
 globaldata.etol=0.0001;
@@ -21,6 +21,8 @@ globaldata.Rmin=1;
 globaldata.Rmax=20;
 globaldata.B=3;
 globaldata.M_rootmax=0.5e6;
+globaldata.flags.tiploss=true;
+globaldata.flags.overrideLimits=false;
 tic;
 
 globaldata.maxiters=250;

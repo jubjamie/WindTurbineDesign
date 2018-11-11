@@ -19,3 +19,19 @@ legend({['Found Solution' newline '$\theta$: ' num2str(round(xdeg(1),2)) '$^\cir
     'Location','Northeast','Interpreter','latex','FontSize',12);
 set(gcf,'position',[200,200,650,450])
 saveas(f6,'status/powerLastSolution.png');
+
+% Change settings
+globaldata.flags.tiploss=false;
+globaldata.flags.overrideLimits=true;
+
+[diff, AEP, S3_ntl] = WTVelocityRange(x, globaldata.A, globaldata.k, globaldata.w, globaldata.c_mean, globaldata.Rmax, globaldata.Rmin, 3, globaldata.Vmin, globaldata.Vmax,globaldata);
+
+% Revert settings
+globaldata.flags.tiploss=true;
+globaldata.flags.overrideLimits=false;
+
+plot(S3_ntl(:,1),(S3_ntl(:,4)./1e6));
+legend({['Found Solution' newline '$\theta$: ' num2str(round(xdeg(1),2)) '$^\circ$'  ...
+    newline '$\theta_{tw}$: ' num2str(round(xdeg(2),2)) '$^\circ$/m' newline...
+    '$c_{grad}$: ' num2str(round(xdeg(3),4))], 'Ideal AEP Solution','Tip Losses Neglected'},...
+    'Location','Northeast','Interpreter','latex','FontSize',12);
