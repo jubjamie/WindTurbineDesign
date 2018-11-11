@@ -21,6 +21,8 @@ globaldata.Rmin=1;
 globaldata.Rmax=20;
 globaldata.B=3;
 globaldata.M_rootmax=0.5e6;
+globaldata.ms.pos=1;
+globaldata.ms.loops=1;
 globaldata.flags.tiploss=true;
 globaldata.flags.overrideLimits=false;
 tic;

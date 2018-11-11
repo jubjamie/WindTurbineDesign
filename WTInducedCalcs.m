@@ -56,7 +56,9 @@ for i=1:looplimit
         a_in=(k*(a_out-a_in))+a_in;
         if a_in>1
             a_in=1;
-            disp('Resetting a to 1');
+        elseif a_in<0
+            a_in=0;
+            %disp('Resetting a to 1');
         end
         
         %Log adash loop limit
@@ -67,6 +69,18 @@ for i=1:looplimit
         if i<adash_looplimit
             %See if adash near boundaries
             adash_in=(k*(adash_out-adash_in))+adash_in;
+            %{
+            if adash_in>1
+            adash_in=1;
+            disp('Resetting adash');
+            elseif adash_in<0
+            adash_in=0;
+            disp('Resetting adash');
+            end
+            %}
+            if ~isreal(adash_in)
+                adash_in=real(adash_in)*0.95;
+            end
             
         else
             adash_in=0;

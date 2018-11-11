@@ -3,7 +3,10 @@ function stop = optMonitor(x, optimValues,state,globaldata)
 %   Detailed explanation goes here
 
 currOptIt=double(optimValues.iteration)+1;
-currPos=currOptIt/globaldata.maxiters;
+loopSection=globaldata.ms.pos;
+totalLoops=globaldata.ms.loops;
+completedFraction=(loopSection-1)/totalLoops;
+currPos=completedFraction+((currOptIt/globaldata.maxiters)/totalLoops);
 
 switch state
     case 'init'
