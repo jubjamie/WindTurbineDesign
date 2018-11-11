@@ -49,6 +49,9 @@ for vn=1:N
         %disp(['Deflections Exceeded - z: ' num2str(abs(def_zHold(end)))]);
     else
     local_power=0.5*(powerHold(1,vn)+powerHold(1,vn+1));
+        if local_power<0
+            local_power=0;
+        end
     %disp(['Deflections Exceeded - z: ' num2str(abs(def_zHold(end)))]);
     end
     local_prob=windProb(A,k,lowerbandv0,upperbandv0);
@@ -65,6 +68,10 @@ for vn=1:N
 end
 
 AEP=sum(S3(:,4));
+if AEP<0
+    disp(['negative AEP >' num2str(bladeConfig(1)) ' - ' num2str(bladeConfig(2)) ' - ' num2str(bladeConfig(3))]);
+end
+    
 total_diff=sum(S3(:,6));
 
 end

@@ -34,8 +34,8 @@ plot(rad2deg(variableSpace),aepHold,'b-');
 globaldata.flags.overrideLimits=false;
 
 %% Changing Theta twist
-N=295;
-variableSpace=linspace(deg2rad(-2),deg2rad(-0.3),N);
+N=300;
+variableSpace=linspace(deg2rad(-1.5),deg2rad(0.5),N);
 aepHold=zeros(1,N);
 progressbar('Finding AEPs - Changing Theta Twist');
 for i=1:N
