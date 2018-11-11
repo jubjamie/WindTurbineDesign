@@ -5,10 +5,14 @@ By using helicopter rotor theory, this work finds a technical optimum design for
 
 ## Current Status
 
-### Optimised Blade - Failing
+### Optimised Blade
 Latest optimiser solution.
 <p align="center">
 <img src="status/optSol.png?raw=true" />
+</p>
+#### Current AEP Power Profile
+<p align="center">
+<img src="status/pwoerLastSolution.png?raw=true" />
 </p>
 
 ### Section 1 Single Validation Results
