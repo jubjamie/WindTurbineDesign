@@ -15,8 +15,7 @@ a_in=a;
 adash_in=adash;
 
 for i=1:looplimit
-    %progressbar([],[],i/(looplimit+1), []); %Update progress bar for loop
-    
+
     phi_flow=atan(((1-a_in)*V0)/((1+adash_in)*omega*y)); %Calculate phi flow angle
     alpha=phi_flow-theta; %Calculate alpha
     if ~isreal(alpha)

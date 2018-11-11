@@ -24,8 +24,8 @@ globaldata.M_rootmax=0.5e6;
 tic;
 
 globaldata.maxiters=250;
-progressbar('Calculating Power', 'Solving Rotor', 'Finding Local Induced Flow', 'Optimisation');
-%progressbar([],[],[], (1/maxiters));
+progressbar('Optimisation');
+
 opts = optimset('fminsearch');
 opts.Display = 'iter'; %What to display in command window
 opts.TolX = 0.0001; %Tolerance on the variation in the parameters
@@ -46,6 +46,7 @@ end
 
 runtimer=toc;
 
+progressbar(1);
 statustablematrix(xdeg, {'Theta','Theta_Twist','c_grad'}, 'status/optSolSmall.png', 'Optimiser Results','print',1.5);
 fprintf(globaldata.logid,'\r\nFINAL SOLUTION\r\n');
 fprintf(globaldata.logid,'Theta: %f deg.  Theta tw: %f deg.  c_grad: %f\r\n',xdeg(1),xdeg(2),xdeg(3));

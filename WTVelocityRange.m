@@ -6,7 +6,7 @@ function [total_diff, AEP, S3] = WTVelocityRange(bladeConfig, A, k, omega, MeanC
 %Banded velocity calcs for wind distribution.
 N=20; % Number of nodes to evaluate
 V0delta=(MaxV0-MinV0)/N; % Find the velocity delta for each node
-S3=zeros(N,7); %Create empty matrix for S3 results
+S3=zeros(N,8); %Create empty matrix for S3 results
 local_upper_power=0;
 upperbandv0=0;
 powerHold=zeros(1,N+1);
@@ -20,7 +20,7 @@ parfor pn=1:N+1
 end
 
 for vn=1:N
-    %progressbar((vn/(N)-0.01),[],[],[]);
+
     local_v=MinV0+((vn-0.5)*V0delta);
     lowerbandv0=MinV0+((vn-1)*V0delta);
     upperbandv0=lowerbandv0+V0delta;
@@ -59,7 +59,7 @@ for vn=1:N
     local_eff=local_AEP/local_AEP_ideal;
     
     
-    S3(vn,:)=[local_v, local_power, local_prob, local_AEP, local_AEP_ideal, local_diff, local_eff];
+    S3(vn,:)=[local_v, local_power, local_prob, local_AEP, local_AEP_ideal, local_diff, local_eff, abs(def_zHold(vn))];
 end
 
 AEP=sum(S3(:,4));
