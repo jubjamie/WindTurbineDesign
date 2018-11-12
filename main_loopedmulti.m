@@ -27,7 +27,7 @@ tic;
 
 globaldata.maxiters=100;
 
-paramStepSize=[8,3,2];
+paramStepSize=[4,3,2];
 globaldata.ms.loops=prod(paramStepSize);
 progressbar('Optimisation');
 
