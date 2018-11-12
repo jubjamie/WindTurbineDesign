@@ -81,6 +81,14 @@ for i=1:looplimit
             if ~isreal(adash_in)
                 adash_in=real(adash_in)*0.95;
             end
+            if adash_in>1
+            adash_in=0.99;
+            %disp('Resetting adash');
+            elseif adash_in<0
+            %disp(['Resetting adash - ' num2str(adash_in)]);
+            adash_in=0.01;
+            
+            end
             
         else
             adash_in=0;

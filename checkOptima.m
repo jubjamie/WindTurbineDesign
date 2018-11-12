@@ -5,7 +5,7 @@ function [xdeg_co] = checkOptima(x,globaldata)
 globaldata.flags.overrideLimits=true;
 
 %% Changing Theta 0
-N=300;
+N=500;
 variableSpace=linspace(deg2rad(2),deg2rad(18),N);
 aepHold=zeros(1,N);
 progressbar('Finding AEPs - Changing Theta');
@@ -34,7 +34,7 @@ plot(rad2deg(variableSpace),aepHold,'b-');
 globaldata.flags.overrideLimits=false;
 
 %% Changing Theta twist
-N=300;
+N=150;
 variableSpace=linspace(deg2rad(-1.5),deg2rad(0.5),N);
 aepHold=zeros(1,N);
 progressbar('Finding AEPs - Changing Theta Twist');
@@ -50,7 +50,7 @@ plot(rad2deg(variableSpace),aepHold);
 xdeg_co=[rad2deg(x(1)),rad2deg(x(2)),x(3)];
 
 %% Changing c_grad
-N=300;
+N=150;
 variableSpace=linspace(-0.1,0.1,N);
 aepHold=zeros(1,N);
 progressbar('Finding AEPs - Changing Chord Gradient');

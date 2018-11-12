@@ -25,25 +25,28 @@ globaldata.flags.tiploss=true;
 globaldata.flags.overrideLimits=false;
 tic;
 
-globaldata.maxiters=250;
+globaldata.maxiters=100;
 
-paramStepSize=[7,5,3];
+paramStepSize=[8,3,2];
 globaldata.ms.loops=prod(paramStepSize);
 progressbar('Optimisation');
 
 opts = optimset('fminsearch');
 opts.Display = 'iter'; %What to display in command window
 opts.TolX = 0.0001; %Tolerance on the variation in the parameters
-opts.TolFun = 1; %Tolerance on the error
+opts.TolFun = 1000; %Tolerance on the error
 opts.OutputFcn = @(x,optimValues,state)optMonitor(x,optimValues,state,globaldata); %Tolerance on the error
 opts.MaxIter = globaldata.maxiters-1; %Max number of iterations
 
 % Set iteration options.
 UBs=[deg2rad(20) deg2rad(0.5) 0.099];
 LBs=[deg2rad(2) deg2rad(-2) -0.1];
-thetas=linspace(LBs(1),UBs(1),paramStepSize(1));
-theta_twists=linspace(LBs(2),UBs(2),paramStepSize(2));
-c_grads=linspace(LBs(3),UBs(3),paramStepSize(3));
+thetas=linspace(LBs(1),UBs(1),paramStepSize(1)+2);
+thetas(1)=[]; thetas(end)=[];
+theta_twists=linspace(LBs(2),UBs(2),paramStepSize(2)+2);
+theta_twists(1)=[]; theta_twists(end)=[];
+c_grads=linspace(LBs(3),UBs(3),paramStepSize(3)+2);
+c_grads(1)=[]; c_grads(end)=[];
 
 % Current best diff
 curr_best_diff=1e11;
