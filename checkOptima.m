@@ -5,7 +5,7 @@ function [xdeg_co] = checkOptima(x,globaldata)
 globaldata.flags.overrideLimits=true;
 
 %% Changing Theta 0
-N=500;
+N=200;
 variableSpace=linspace(deg2rad(2),deg2rad(18),N);
 aepHold=zeros(1,N);
 progressbar('Finding AEPs - Changing Theta');

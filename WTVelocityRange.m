@@ -14,7 +14,7 @@ momentHold=zeros(1,N+1);
 def_yHold=zeros(1,N+1);
 def_zHold=zeros(1,N+1);
 
-for pn=1:N+1
+parfor pn=1:N+1
         lowerbandv0=MinV0+((pn-1)*V0delta);
         [~,momentHold(pn),~,powerHold(pn),def_yHold(pn),def_zHold(pn)]=WTSingleVelocity(lowerbandv0, bladeConfig(1), bladeConfig(2), bladeConfig(3), TipRadius,RootRadius, B,globaldata);
 end

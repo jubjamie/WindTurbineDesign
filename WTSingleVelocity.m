@@ -4,7 +4,7 @@ function [Mtot_t, Mtot_n,S2,Power,def_max_y,def_max_z] = WTSingleVelocity(V0, Th
 %root.
 
 N=19; %set radius node count
-radius_delta=(TipRadius-RootRadius)/((2*N)); %Increment in radius
+radius_delta=(TipRadius-RootRadius)/(N); %Increment in radius
 S2=zeros(N,13); %Creat empty matrix to hold values
 
 c_mean_local=globaldata.c_mean;
@@ -18,7 +18,7 @@ pns=zeros(1,N+1);% Pzs
 
 for j=1:(2*N)
 
-    local_radius=RootRadius+((j-1)*radius_delta); % Calculate local radius from centre increment TODO shorten this
+    local_radius=RootRadius+((j-1)*0.5*radius_delta); % Calculate local radius from centre increment TODO shorten this
     local_chord=c_mean_local+((local_radius-((TipRadius-RootRadius)/2))*c_grad); % Calculate tapered chord
     local_theta=Theta0+(local_radius*ThetaTwist);
     [a_s1, adash_s1, phi_s1, Cn_s1, Ct_s1, Vrel, tol_s1, i_s1]=WTInducedCalcs(0.2,0.2,V0,w_local,local_radius,local_theta,local_chord,B,logid_local,etol_local,TipRadius,globaldata);
