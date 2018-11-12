@@ -48,10 +48,10 @@ My=zeros(1,N+1);
 Mz=zeros(1,N+1);
 for p=N:-1:1
     % Interp Forces at each node
-    force_y_p=pts(N);
-    force_y_p1=pts(N-1);
-    force_z_p=pns(N);
-    force_z_p1=pns(N-1);
+    force_y_p=pts(p+1);
+    force_y_p1=pts(p);
+    force_z_p=pns(p+1);
+    force_z_p1=pns(p);
     Ty(p)=Ty(p+1)+(1/2*(force_y_p+force_y_p1)*radius_delta);
     Tz(p)=Tz(p+1)+(1/2*(force_z_p+force_z_p1)*radius_delta);
     My(p)=My(1,p+1)-(radius_delta*Tz(p+1))-((force_z_p1/6)+(force_z_p/3))*radius_delta^2;
