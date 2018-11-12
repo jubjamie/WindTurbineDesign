@@ -14,7 +14,7 @@ momentHold=zeros(1,N+1);
 def_yHold=zeros(1,N+1);
 def_zHold=zeros(1,N+1);
 
-for pn=1:N+1
+parfor pn=1:N+1
         lowerbandv0=MinV0+((pn-1)*V0delta);
         [~,momentHold(pn),~,powerHold(pn),def_yHold(pn),def_zHold(pn)]=WTSingleVelocity(lowerbandv0, bladeConfig(1), bladeConfig(2), bladeConfig(3), TipRadius,RootRadius, B,globaldata);
 end
@@ -41,10 +41,10 @@ for vn=1:N
     
     %Find node power as mean of boundary values
     
-    if(max(momentHold(vn),momentHold(vn+1))>globaldata.M_rootmax && globaldata.flags.overrideLimits==false)
+    if(max(momentHold)>globaldata.M_rootmax && globaldata.flags.overrideLimits==false)
         local_power=0;
         disp(['Moment Limit Exceeded: ' num2str(max(momentHold))]);
-    elseif(max(abs(def_zHold(vn)),abs(def_zHold(vn+1)))>3 && globaldata.flags.overrideLimits==false)
+    elseif(abs(def_zHold(end))>3 && globaldata.flags.overrideLimits==false)
         local_power=0;
         disp(['Deflections Exceeded - z: ' num2str(abs(def_zHold(end)))]);
     else

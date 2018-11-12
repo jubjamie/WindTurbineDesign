@@ -4,7 +4,7 @@ function [Mtot_t, Mtot_n,S2,Power,def_max_y,def_max_z] = WTSingleVelocity(V0, Th
 %root.
 
 N=19; %set radius node count
-radius_delta=(TipRadius-RootRadius)/((2*N)); %Increment in radius
+radius_delta=(TipRadius-RootRadius)/(N); %Increment in radius
 S2=zeros(N,13); %Creat empty matrix to hold values
 
 c_mean_local=globaldata.c_mean;
@@ -12,16 +12,12 @@ logid_local=globaldata.logid;
 w_local=globaldata.w;
 etol_local=globaldata.etol;
 
-pts=zeros(1,N+1); % Pys
-pns=zeros(1,N+1);% Pzs
+for j=1:N
 
-
-for j=1:(2*N)
-
-    local_radius=RootRadius+((j-1)*radius_delta); % Calculate local radius from centre increment TODO shorten this
+    local_radius=RootRadius+((j-1)*radius_delta)+(radius_delta/2); % Calculate local radius from centre increment TODO shorten this
     local_chord=c_mean_local+((local_radius-((TipRadius-RootRadius)/2))*c_grad); % Calculate tapered chord
     local_theta=Theta0+(local_radius*ThetaTwist);
-    [a_s1, adash_s1, phi_s1, Cn_s1, Ct_s1, Vrel, tol_s1, i_s1]=WTInducedCalcs(0.2,0.2,V0,w_local,local_radius,local_theta,local_chord,B,logid_local,etol_local,TipRadius,globaldata);
+    [a_s1, adash_s1, phi_s1, Cn_s1, Ct_s1, Vrel, tol_s1, i_s1]=WTInducedCalcs(0,0,V0,w_local,local_radius,local_theta,local_chord,B,logid_local,etol_local,TipRadius,globaldata);
     if a_s1<0 || adash_s1<0
         %fprintf(logid_local,'S2 Negatives Detected: a=%f, adash=%f Calling function: WTSingleVelocity(%f, %f, %f, %f, %f,%f,%f)\r\n',a_s1, adash_s1,V0, Theta0, ThetaTwist, c_grad, TipRadius,RootRadius, B);
     end
@@ -32,13 +28,8 @@ for j=1:(2*N)
     Mn=(0.5*1.225*local_chord*Cn_s1*Vrel^2)*radius_delta*local_radius;
     pt=Mt/(radius_delta*local_radius);
     pn=Mn/(radius_delta*local_radius);
-    if mod(j,2)==1
-        % put ps into their array
-        pts(round(j/2,0))=pt;
-        pns(round(j/2,0))=pn;
-    else
-    S2(j/2,:)=[local_radius, a_s1, adash_s1, phi_s1, Cn_s1, Ct_s1, tol_s1, i_s1,Vrel,Mt,Mn,pt,pn];
-    end
+    S2(j,:)=[local_radius, a_s1, adash_s1, phi_s1, Cn_s1, Ct_s1, tol_s1, i_s1,Vrel,Mt,Mn,pt,pn];
+
 end
 
 
@@ -46,18 +37,29 @@ Ty=zeros(1,N+1);
 Tz=zeros(1,N+1);
 My=zeros(1,N+1);
 Mz=zeros(1,N+1);
-for p=N:-1:1
+for p=N:-1:3
     % Interp Forces at each node
-    force_y_p=pts(N);
-    force_y_p1=pts(N-1);
-    force_z_p=pns(N);
-    force_z_p1=pns(N-1);
-    Ty(p)=Ty(p+1)+(1/2*(force_y_p+force_y_p1)*radius_delta);
-    Tz(p)=Tz(p+1)+(1/2*(force_z_p+force_z_p1)*radius_delta);
+    force_y_p=(1/2*(S2(p,12)+S2(p-1,12)));
+    force_y_p1=(1/2*(S2(p-1,12)+S2(p-2,12)));
+    force_z_p=(1/2*(S2(p,13)+S2(p-1,13)));
+    force_z_p1=(1/2*(S2(p-1,13)+S2(p-2,13)));
+    Ty(p)=Ty(p+1)+(S2(p,12)*radius_delta);
+    Tz(p)=Tz(p+1)+(S2(p,13)*radius_delta);
     My(p)=My(1,p+1)-(radius_delta*Tz(p+1))-((force_z_p1/6)+(force_z_p/3))*radius_delta^2;
     Mz(p)=Mz(1,p+1)+(radius_delta*Ty(p+1))+((force_y_p1/6)+(force_y_p/3))*radius_delta^2;
 end
 
+% For nodes 1 and two use central approximations.
+for p=2:-1:1
+    force_y_p=S2(p,12);
+    force_y_p1=S2(max(p-1,1),12);
+    force_z_p=S2(p,13);
+    force_z_p1=S2(max(p-1,1),13);
+    Ty(p)=Ty(p+1)+(S2(p,12)*radius_delta);
+    Tz(p)=Tz(p+1)+(S2(p,13)*radius_delta);
+    My(p)=My(1,p+1)-(radius_delta*Tz(p+1))-((force_z_p1/6)+(force_z_p/3))*radius_delta^2;
+    Mz(p)=Mz(1,p+1)+(radius_delta*Ty(p+1))+((force_y_p1/6)+(force_y_p/3))*radius_delta^2;
+end
 
 % M1s and M2s
 node_thetas=linspace(Theta0,Theta0+((TipRadius-RootRadius)*ThetaTwist),N+1);
