@@ -29,6 +29,7 @@ annotation('textbox',[.62 .4 .3 .3],'String',['Found Solution' newline ...
     '$c_{grad}$: ' num2str(round(xdeg(3),4))],'FitBoxToText','on','Interpreter','Latex','FontSize',13);
 
 saveas(f6,'status/powerLastSolution.png');
+saveas(f6,'graphs/powerLastSolution.png');
 
 % Change settings
 globaldata.flags.tiploss=false;
@@ -49,14 +50,56 @@ legend({'Found Solution', 'Ideal AEP Solution','Tip Losses Neglected'},...
 
 globaldata.flags.tiploss=true;
 
+saveas(f6,'status/powerLastSolutionCombinedNoTipLoss.png');
+saveas(f6,'graphs/powerLastSolutionCombinedNoTipLoss.png');
+
+%% Plot Power Curve vs. Betz Curve
+f13=figure(13);
+
+% Plot solution curve overriding limits
+% Change settings
+globaldata.flags.overrideLimits=true;
+
+[diff, AEP, S3_os] = WTVelocityRange(x, globaldata.A, globaldata.k, globaldata.w, globaldata.c_mean, globaldata.Rmax, globaldata.Rmin, 3, globaldata.Vmin, globaldata.Vmax,globaldata);
+
+% Revert settings
+globaldata.flags.overrideLimits=false;
+
+actual_powers_os=S3_os(:,2);
+[v0s,actual_powers_os]=quickInterp(S3_os(:,1),actual_powers_os,'start',globaldata.Vmin);
+[v0s,actual_powers_os]=quickInterp(v0s,actual_powers_os,'end',globaldata.Vmax);
+plot(v0s,(actual_powers_os./1e6),'r--');
+
+hold on;
+grid;
+
+ideal_powers=S3(:,5)./(S3(:,3).*8760);
+actual_powers=S3(:,2);
+[v0s,actual_powers]=quickInterp(S3(:,1),actual_powers,'start',globaldata.Vmin);
+[v0s,actual_powers]=quickInterp(v0s,actual_powers,'end',globaldata.Vmax);
+plot(v0s,(actual_powers./1e6),'r-');
+
+[v0s,ideal_powers]=quickInterp(S3(:,1),ideal_powers,'start',globaldata.Vmin);
+[v0s,ideal_powers]=quickInterp(v0s,ideal_powers,'end',globaldata.Vmax);
+plot(v0s,(ideal_powers./1e6),'b-');
+
+legend({'Solution - Ignoring Bending/Moment Limits', 'Solution - With Shutdown Limits','Betz Curve'},...
+    'Location','Northwest','Interpreter','latex','FontSize',12);
+title('Power Curve Comparison');
+xlabel('Wind Speed (m/s)');
+ylabel('Power (MW)');
+saveas(f13,'graphs/powerBetzCurves.png');
+
+
 
 %% Plot blade power profile with tip losses on/off at 15m/s
-[Mtot_t, Mtot_n,S2,Power,def_max_y,def_max_z]=WTSingleVelocity(15, x(1), x(2), x(3), globaldata.Rmax,globaldata.Rmin, globaldata.B,globaldata);
+[~, ~,S2,~,~,~]=WTSingleVelocity(15, x(1), x(2), x(3), globaldata.Rmax,globaldata.Rmin, globaldata.B,globaldata);
 statustablematrix(S2,{'r', 'a', 'adash', 'phi', 'Cn', 'Ct', 'tol', 'i','Vrel','Mt','Mn','Pt','Pn'},'status/optSol_S2.png','Rotor Profile 15m/s','figure',1);
 Power=S2(:,10)*globaldata.B*globaldata.w;
 f10=figure(10);
 plot(S2(:,1),Power);
-hold on
+hold on;
+grid;
 globaldata.flags.tiploss=false;
 [Mtot_t, Mtot_n,S2,Power,def_max_y,def_max_z]=WTSingleVelocity(15, x(1), x(2), x(3), globaldata.Rmax,globaldata.Rmin, globaldata.B,globaldata);
 %statustablematrix(S2,{'r', 'a', 'adash', 'phi', 'Cn', 'Ct', 'tol', 'i','Vrel','Mt','Mn','Pt','Pn'},'status/optSol_S2.png','Rotor Profile 20m/s','figure',1);
@@ -67,7 +110,7 @@ xlabel('Blade Radius (m)');
 ylabel('Power (W)');
 legend({'With Tip Losses', 'Without Tip Losses'},...
     'Location','Northeast','Interpreter','latex','FontSize',11);
-saveas(f10,'status/bladeTipLoss.png');
+saveas(f10,'graphs/bladeTipLoss.png');
 globaldata.flags.tiploss=true;
 
 %% Plot probability against V0
@@ -77,6 +120,7 @@ v0s_delta=v0s(2)-v0s(1);
 probs=windProb(globaldata.A,globaldata.k,v0s-(v0s_delta/2),v0s+(v0s_delta/2));
 f11=figure(11);
 plot(v0s,probs);
+grid;
 title('Weibull Probabilities of Wind Speeds');
 xlabel('Wind Speed (m/s)');
 ylabel('Probability');
@@ -86,7 +130,12 @@ saveas(f10,'graphs/windProbs.png');
 f12=figure(12);
 % Find highest speed solution index
 v_powers=S3(:,2)';
-highestSpeedIndex=find(v_powers==0,1)-1;
+if(all(S3(:,2)>0))
+    %No cut off, highest speed is end value
+highestSpeedIndex=size(S3,1);
+else
+highestSpeedIndex=find(v_powers>0,1,'last');
+end
 maxDeflect=round(S3(highestSpeedIndex,8),3);
 highestSpeed=S3(highestSpeedIndex,1);
 % Run at highest speed
@@ -109,5 +158,7 @@ annotation('textarrow',[0.2,0.4],[0.8,0.8]);
 annotation('textarrow',[0.2,0.4],[0.4,0.4]);
 annotation('textbox',[0.2 0.44 0.2,0.2],'String',['Wind Speed = ' num2str(highestSpeed) ' m/s'],'Interpreter','Latex','FitBoxToText','on','HorizontalAlignment','center','FontSize',12,'LineStyle','none');
 annotation('textbox',[0.65 0.34 0.2,0.2],'String',['Max Deflection' newline '=' newline  num2str(maxDeflect) ' m'],'Interpreter','Latex','FitBoxToText','on','HorizontalAlignment','center','FontSize',14);
-set(gcf,'position',[200,200,550,600])
+set(gcf,'position',[800,200,550,600])
 saveas(f12,'graphs/maxDeflection.png');
+
+
