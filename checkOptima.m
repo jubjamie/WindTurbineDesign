@@ -81,7 +81,7 @@ f9=figure(9);
 plot(variableSpace,aepHold,'r-');
 xdeg_co=[rad2deg(x(1)),rad2deg(x(2)),x(3)];
 title('Check Optima - Changing Chord Gradient Only');
-xlabel('Initial Blade Angle Theta (°)');
+xlabel('Chord Gradient');
 ylabel('AEP (Whr/yr)');
 hold on;
 plot([xdeg_co(3),xdeg_co(3)],ylim,'b-');

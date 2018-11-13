@@ -50,7 +50,7 @@ globaldata.flags.overrideLimits=true;
 [v0s,powers]=quickInterp(S3_ntl(:,1),S3_ntl(:,4),'start',globaldata.Vmin);
 [v0s,powers]=quickInterp(v0s,powers,'end',globaldata.Vmax);
 
-plot(v0s,(powers./1e6),'--c'); % Plot blade without tip losses.
+plot(v0s,(powers./1e6),'g--'); % Plot blade without tip losses.
 legend({'Found Solution', 'Ideal AEP Solution','Tip Losses Neglected'},...
     'Location','Northeast','Interpreter','latex','FontSize',12);
 
@@ -102,7 +102,38 @@ xlabel('Wind Speed (m/s)');
 ylabel('Power (MW)');
 saveas(f13,'graphs/powerBetzCurves.png');
 
+%% Plot Power Coeffs
+f14=figure(14);
 
+% Plot solution curve overriding limits
+% Change settings to create version of data overriding shutdown limits
+
+actual_powers_os=S3_os(:,2);
+[v0s,actual_powers_os]=quickInterp(S3_os(:,1),actual_powers_os,'start',globaldata.Vmin);
+[v0s,actual_powers_os]=quickInterp(v0s,actual_powers_os,'end',globaldata.Vmax);
+% Plot power coeff with no limits
+plot(v0s,(actual_powers_os./...
+    (0.5*1.225*(pi*(globaldata.Rmax^2-globaldata.Rmin^2)).*(v0s).^3)),'r--');
+
+hold on;
+grid;
+
+ideal_powers=S3(:,5)./(S3(:,3).*8760);
+actual_powers=S3(:,2);
+[v0s,actual_powers]=quickInterp(S3(:,1),actual_powers,'start',globaldata.Vmin);
+[v0s,actual_powers]=quickInterp(v0s,actual_powers,'end',globaldata.Vmax);
+plot(v0s,(actual_powers./(0.5*1.225*(pi*(globaldata.Rmax^2-globaldata.Rmin^2)).*(v0s).^3)),'r-'); % Plot actual power curve
+
+plot([v0s(1),v0s(end)],[(16/27),(16/27)],'b-'); % Plot ideal power curve
+
+legend({'Solution - Ignoring Bending/Moment Limits',...
+    'Solution - With Shutdown Limits','Betz Curve'},...
+    'Location','North','Interpreter','latex','FontSize',12);
+title('Power Coefficient Comparison');
+xlabel('Wind Speed (m/s)');
+ylabel('Power Coefficient');
+ylim([0 0.9]);
+saveas(f14,'graphs/powerBetzCurvesCoeff.png');
 
 %% Plot blade power profile with tip losses on/off at 15m/s
 % Get more indepth blade data at 15 m/s
@@ -113,7 +144,7 @@ statustablematrix(S2,{'r', 'a', 'adash', 'phi', 'Cn', 'Ct', 'tol',...
     'Rotor Profile 15m/s','figure',1);
 Power=S2(:,10)*globaldata.B*globaldata.w;
 f10=figure(10);
-plot(S2(:,1),Power); % Plot power with tip losses at 15 m/s across blade
+plot(S2(:,1),Power,'b-'); % Plot power with tip losses at 15 m/s across blade
 hold on;
 grid;
 
@@ -122,12 +153,13 @@ globaldata.flags.tiploss=false;
 [Mtot_t, Mtot_n,S2,Power,def_max_y,def_max_z]=WTSingleVelocity(15, x(1),...
     x(2), x(3), globaldata.Rmax,globaldata.Rmin, globaldata.B,globaldata);
 Power=S2(:,10)*globaldata.B*globaldata.w;
-plot(S2(:,1),Power); % Plot power without tip losses at 15 m/s across blade
+plot(S2(:,1),Power,'r-'); % Plot power without tip losses at 15 m/s across blade
 title('Tip Losses Effect at 15m/s');
 xlabel('Blade Radius (m)');
 ylabel('Power (W)');
 legend({'With Tip Losses', 'Without Tip Losses'},...
-    'Location','Northeast','Interpreter','latex','FontSize',11);
+    'Location','Northeast','Interpreter','latex','FontSize',11,'Location',...
+    'Northwest');
 saveas(f10,'graphs/bladeTipLoss.png');
 
 globaldata.flags.tiploss=true; % Reset flag
@@ -144,7 +176,7 @@ grid;
 title('Weibull Probabilities of Wind Speeds');
 xlabel('Wind Speed (m/s)');
 ylabel('Probability');
-saveas(f10,'graphs/windProbs.png');
+saveas(f11,'graphs/windProbs.png');
 
 %% Plot Deflection
 f12=figure(12);
@@ -152,13 +184,13 @@ f12=figure(12);
 v_powers=S3(:,2)';
 highestSpeedIndex=find(v_powers>0,1,'last');
 
-% Find max deflection and speed at which it occurs (by element ONLY);
-maxDeflect=round(S3(highestSpeedIndex,8),3);
+% Find speed at which it occurs (by element ONLY);
 highestSpeed=S3(highestSpeedIndex,1);
 % Evaluate blade at highest speed for more in depth deflection data
-[~,~,~,~,~,~,defz_array]=WTSingleVelocity(highestSpeed, x(1), x(2), x(3),...
+[~,~,S2_maxdef,~,~,~,defz_array]=WTSingleVelocity(highestSpeed, x(1), x(2), x(3),...
     globaldata.Rmax,globaldata.Rmin, globaldata.B,globaldata);
-
+% Find deflection at tip for this scenario
+maxDeflect=abs(round(defz_array(end),3));
 % Create the radius space for the blade
 radius_space=linspace(globaldata.Rmin,globaldata.Rmax,...
     round(globaldata.Rmax-globaldata.Rmin,0)+1);
