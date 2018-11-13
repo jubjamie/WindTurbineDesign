@@ -24,6 +24,15 @@ end
 f7=figure(7);
 plot(rad2deg(variableSpace),aepHold,'r-');
 xdeg_co=[rad2deg(x(1)),rad2deg(x(2)),x(3)];
+title('Check Optima - Changing Theta0 Only');
+xlabel('Initial Blade Angle Theta (°)');
+ylabel('AEP (Whr/yr)');
+hold on;
+plot([xdeg_co(1),xdeg_co(1)],ylim,'b-');
+legend({'AEP Profile',['Found Solution: ' num2str(xdeg_co(1)) '$^\circ$'] },'Interpreter','Latex','Location',...
+    'Northeast');
+grid on;
+saveas(f7,'graphs/optima_theta.png');
 
 
 %% Changing Theta twist
@@ -43,7 +52,15 @@ end
 f8=figure(8);
 plot(rad2deg(variableSpace),aepHold,'r-');
 xdeg_co=[rad2deg(x(1)),rad2deg(x(2)),x(3)];
-
+title('Check Optima - Changing Theta Twist Rate Only');
+xlabel('Blade Twist (°/m)');
+ylabel('AEP (Whr/yr)');
+hold on;
+plot([xdeg_co(2),xdeg_co(2)],ylim,'b-');
+legend({'AEP Profile',['Found Solution: ' num2str(xdeg_co(2)) '$^\circ$/m']},'Interpreter','Latex','Location',...
+    'Northeast');
+grid on;
+saveas(f8,'graphs/optima_theta_twist.png');
 
 %% Changing c_grad
 N=150; % Mesh resolution
@@ -63,6 +80,14 @@ end
 f9=figure(9);
 plot(variableSpace,aepHold,'r-');
 xdeg_co=[rad2deg(x(1)),rad2deg(x(2)),x(3)];
-
+title('Check Optima - Changing Chord Gradient Only');
+xlabel('Initial Blade Angle Theta (°)');
+ylabel('AEP (Whr/yr)');
+hold on;
+plot([xdeg_co(3),xdeg_co(3)],ylim,'b-');
+legend({'AEP Profile',['Found Solution: ' num2str(xdeg_co(3))]},'Interpreter','Latex','Location',...
+    'Northwest');
+grid on;
+saveas(f9,'graphs/optima_c_grad.png');
 end
 
