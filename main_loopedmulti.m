@@ -116,10 +116,12 @@ switch runSolutionInput
 end
 
 %% Clean Up
-
+% Finish and close logs and progress bars.
 fprintf(globaldata.logid,'\r\n> > > END < < <\r\n');
 fprintf(globaldata.logid,'Tests Completed in %f seconds---\r\n',runtimer);
 progressbar(1);
 fclose(globaldata.logid);
+% Display core code run time
 disp(['Core Completed in ' num2str(runtimer) ' seconds']);
+% Display link to log in command window.
 disp(['<a href = "../logs/' logpath '.log">Open Session Log</a>']);
