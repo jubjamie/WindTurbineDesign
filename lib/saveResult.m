@@ -1,1 +1,1 @@
-save('savedResult.mat','x','globaldata','S3');
+save('savedResult.mat','x','xdeg','globaldata','S3');
