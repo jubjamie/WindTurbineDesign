@@ -130,12 +130,9 @@ saveas(f10,'graphs/windProbs.png');
 f12=figure(12);
 % Find highest speed solution index
 v_powers=S3(:,2)';
-if(all(S3(:,2)>0))
-    %No cut off, highest speed is end value
-highestSpeedIndex=size(S3,1);
-else
+
 highestSpeedIndex=find(v_powers>0,1,'last');
-end
+
 maxDeflect=round(S3(highestSpeedIndex,8),3);
 highestSpeed=S3(highestSpeedIndex,1);
 % Run at highest speed
