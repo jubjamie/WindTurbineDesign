@@ -12,7 +12,8 @@ logid=fopen(strcat(newdir,'/logs/',logstamp ,'.log'), 'a');
 % Printer system/run info to header.
 fprintf(logid,'---%s---\r\n',title);
 fprintf(logid,'Log created at: %s\r\n',logstamp);
-fprintf(logid,'Created by %s on %s\r\n',getenv('username'),getenv('computername'));
+fprintf(logid,'Created by %s on %s\r\n',getenv('username'),...
+    getenv('computername'));
 fprintf(logid,'Computer: %s\r\n',getenv('computername'));
 fprintf(logid,'OS: %s\r\n',getenv('os'));
 fprintf(logid,'Processors: %s\r\n',getenv('number_of_processors'));
