@@ -1,7 +1,10 @@
-function [a_out, adash_out, phi_flow, Cn, Ct,Vrel,curr_tol, i] = WTInducedCalcs(a, adash, V0, omega, y, theta, Chord,TipRadius,globaldata)
-%1: SINGLE ELEMENT: use an iterative solution to find the values of a,
+function [a_out, adash_out, phi_flow, Cn, Ct,Vrel,curr_tol, i] = ...
+    WTInducedCalcs(a, adash, V0, omega, y, theta, Chord,TipRadius,globaldata)
+
+%S1: SINGLE ELEMENT: use an iterative solution to find the values of a,
 %adash, phi, Cn and Ct at a particular radius.
 
+%% Set Up
 curr_tol=1; % Dummy current error tolerance
 looplimit=500; % Max number of loops before giving up.
 adash_looplimit=150; % Number of loops before holding adash to zero.
@@ -13,6 +16,7 @@ solidity=(globaldata.B*Chord)/(2*pi*y); % Calcualte solidity for this annulus.
 a_in=a;
 adash_in=adash;
 
+%% Converging Loop
 % Loop through the a/a' system of equations to find coefficients
 for i=1:looplimit
     

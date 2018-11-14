@@ -1,6 +1,8 @@
 function [prob] = windProb(A, k, Vi1, Vi2)
-%WINDPROB Summary of this function goes here
-%   Detailed explanation goes here
+%WINDPROB Calculate the Weibull probability for wind speed occurance
+%   Pass in location coefficients and the upper and lower velocities of
+%   the band a probability is required for. Calculate using the 
+%   Weibull distribution.
 
 %Vi_1 prob
 vi1prob=exp(-(Vi1./A).^k);
@@ -8,7 +10,6 @@ vi1prob=exp(-(Vi1./A).^k);
 vi2prob=exp(-(Vi2./A).^k);
 
 %Difference is probability for band.
-
 prob=vi1prob-vi2prob;
 end
 

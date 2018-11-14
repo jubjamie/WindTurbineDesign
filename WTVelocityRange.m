@@ -1,8 +1,12 @@
-function [total_diff, AEP, S3] = WTVelocityRange(bladeConfig, A, k, omega, MeanChord, TipRadius, RootRadius, B, MinV0, MaxV0,globaldata)
+function [total_diff, AEP, S3] = WTVelocityRange(bladeConfig, A, k, omega,...
+                                 MeanChord, TipRadius, RootRadius, B, MinV0,...
+                                 MaxV0,globaldata)
+                             
 %3: ANNUAL ENERGY - loop WTSingleVelocity to find the moments across the
 %entire velocity range. Combine this with the frequency information to get
 %the AEP.
 
+%% Set Up
 N=20; % Number of nodes to evaluate
 V0delta=(MaxV0-MinV0)/N; % Find the velocity delta for each node
 S3=zeros(N,8); %Create empty matrix for S3 results

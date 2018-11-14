@@ -1,6 +1,6 @@
 function [xdeg_co] = checkOptima(x,globaldata)
 %CHECKOPTIMA Produces graphs holding 2 params constant and varying the other.
-%   Helps show check solution is optimal.
+%   Helps show solution is optimal.
 
 
 %% Changing Theta 0
@@ -13,10 +13,10 @@ globaldata.flags.overrideLimits=false; % Ignore bending limits first time.
 
 % Loop through the different theta0 values, AEP to holding array
 for i=1:N
-    [~, aepHold(i), ~] = WTVelocityRange([variableSpace(i),x(2),x(3)], globaldata.A,...
-        globaldata.k, globaldata.w, globaldata.c_mean, globaldata.Rmax,...
-        globaldata.Rmin, globaldata.B, globaldata.Vmin, globaldata.Vmax,...
-        globaldata);
+    [~, aepHold(i), ~] = WTVelocityRange([variableSpace(i),x(2),x(3)],...
+        globaldata.A, globaldata.k, globaldata.w, globaldata.c_mean,...
+        globaldata.Rmax, globaldata.Rmin, globaldata.B, globaldata.Vmin,...
+        globaldata.Vmax, globaldata);
     progressbar(i/N);
 end
 
@@ -29,7 +29,8 @@ xlabel('Initial Blade Angle Theta (°)');
 ylabel('AEP (Whr/yr)');
 hold on;
 plot([xdeg_co(1),xdeg_co(1)],ylim,'b-');
-legend({'AEP Profile',['Found Solution: ' num2str(xdeg_co(1)) '$^\circ$'] },'Interpreter','Latex','Location',...
+legend({'AEP Profile',['Found Solution: ' num2str(xdeg_co(1)) '$^\circ$'] },...
+    'Interpreter','Latex','Location',...
     'Northeast');
 grid on;
 saveas(f7,'graphs/optima_theta.png');
@@ -57,7 +58,8 @@ xlabel('Blade Twist (°/m)');
 ylabel('AEP (Whr/yr)');
 hold on;
 plot([xdeg_co(2),xdeg_co(2)],ylim,'b-');
-legend({'AEP Profile',['Found Solution: ' num2str(xdeg_co(2)) '$^\circ$/m']},'Interpreter','Latex','Location',...
+legend({'AEP Profile',['Found Solution: ' num2str(xdeg_co(2)) '$^\circ$/m']},...
+    'Interpreter','Latex','Location',...
     'Northeast');
 grid on;
 saveas(f8,'graphs/optima_theta_twist.png');
@@ -85,7 +87,8 @@ xlabel('Chord Gradient');
 ylabel('AEP (Whr/yr)');
 hold on;
 plot([xdeg_co(3),xdeg_co(3)],ylim,'b-');
-legend({'AEP Profile',['Found Solution: ' num2str(xdeg_co(3))]},'Interpreter','Latex','Location',...
+legend({'AEP Profile',['Found Solution: ' num2str(xdeg_co(3))]},'Interpreter',...
+    'Latex','Location',...
     'Northwest');
 grid on;
 saveas(f9,'graphs/optima_c_grad.png');

@@ -1,6 +1,5 @@
 function [re] = RE(density,V,c,mu)
-%RE Summary of this function goes here
-%   Detailed explanation goes here
+%RE Convinent function to calculate Reynolds Number chord and usual parameters
 re=(density*V*c)/mu;
 end
 

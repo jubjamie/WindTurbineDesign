@@ -1,4 +1,8 @@
-close all
+%% Intro
+% This script is used to compile all the required graphs for the last
+% solution. It also generates the status images for Github README.
+close all % Close all existing figures to avoid clogging up desktop.
+
 %% Get S3 Data by running blade once more
 [diff, AEP, S3] = WTVelocityRange(x, globaldata.A, globaldata.k,...
     globaldata.w, globaldata.c_mean, globaldata.Rmax, globaldata.Rmin, 3,...
