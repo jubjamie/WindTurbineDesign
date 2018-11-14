@@ -280,3 +280,7 @@ title('Flow Angle Alpha Across the Blade at Different Wind Speeds');
 xlabel('Blade Radius (m)');
 ylabel('Alpha Angle (°)');
 saveas(f16,'graphs/alphaStalling.png');
+
+globaldata.flags.tiploss=true; % Set flags to default
+globaldata.flags.overrideLimits=false;
+
