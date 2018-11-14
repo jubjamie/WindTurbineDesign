@@ -243,9 +243,9 @@ saveas(f12,'graphs/maxDeflection.png');
 
 
 %% Plot Mt and Alpha at different Velocities
-f14=figure(14); % Moment Graph
-f15=figure(15); % Alpha Graph
-clf(14);clf(15); % Clear graphs first.
+f15=figure(15); % Moment Graph
+f16=figure(16); % Alpha Graph
+clf(15);clf(16); % Clear graphs first.
 globaldata.flags.overridelimits=true;
 globaldata.flags.tiploss=false;
 vc=5;
@@ -254,29 +254,29 @@ MtHold=zeros(20,vc);
 for i=1:vc
     [~,~,S2_ol,~,~,~,~]=WTSingleVelocity(vspace(i), x(1), x(2), x(3),...
     globaldata.Rmax,globaldata.Rmin, globaldata.B,globaldata);
-figure(14)
+figure(15)
 hold on;
 grid on;
 plot(S2_ol(:,1),(S2_ol(:,10)./1e3),'DisplayName',[num2str(vspace(i)) ' m/s']);
-figure(15)
+figure(16)
 hold on;
 grid on;
 plot(S2_ol(:,1),(rad2deg(S2_ol(:,4))),'DisplayName',[num2str(vspace(i)) ' m/s']);
 end
-figure(14)
+figure(15)
 leg=legend('Location', 'Northwest');
 set(leg, 'Interpreter', 'Latex');
 set(leg, 'FontSize', 11);
 title('Tangential Moments Along the Blade at Different Wind Speeds');
 xlabel('Blade Radius (m)');
 ylabel('Tangential Moment (kNm)');
-saveas(f14,'graphs/momentStalling.png');
+saveas(f15,'graphs/momentStalling.png');
 
-figure(15)
+figure(16)
 leg=legend('Location', 'Northeast');
 set(leg, 'Interpreter', 'Latex');
 set(leg, 'FontSize', 11);
 title('Flow Angle Alpha Across the Blade at Different Wind Speeds');
 xlabel('Blade Radius (m)');
 ylabel('Alpha Angle (°)');
-saveas(f15,'graphs/alphaStalling.png');
+saveas(f16,'graphs/alphaStalling.png');
