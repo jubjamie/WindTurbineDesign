@@ -1,0 +1,244 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>WTVelocityRange</title><meta name="generator" content="MATLAB 9.5"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2018-11-14"><meta name="DC.source" content="WTVelocityRange.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><pre class="codeinput"><span class="keyword">function</span> [total_diff, AEP, S3] = WTVelocityRange(bladeConfig, A, k, omega,<span class="keyword">...</span>
+                                 MeanChord, TipRadius, RootRadius, B, MinV0,<span class="keyword">...</span>
+                                 MaxV0,globaldata)
+
+<span class="comment">%3: ANNUAL ENERGY - loop WTSingleVelocity to find the moments across the</span>
+<span class="comment">%entire velocity range. Combine this with the frequency information to get</span>
+<span class="comment">%the AEP.</span>
+
+<span class="comment">% Set Up</span>
+N=20; <span class="comment">% Number of nodes to evaluate</span>
+V0delta=(MaxV0-MinV0)/N; <span class="comment">% Find the velocity delta for each node</span>
+S3=zeros(N,8); <span class="comment">%Create empty matrix for S3 results</span>
+<span class="comment">% Pre-allocate arrays</span>
+powerHold=zeros(1,N+1); <span class="comment">% Blade Powers</span>
+momentHold=zeros(1,N+1); <span class="comment">% Root Bending Moments</span>
+def_yHold=zeros(1,N+1); <span class="comment">% Tip Deflection in y</span>
+def_zHold=zeros(1,N+1); <span class="comment">% Tip Deflection in z</span>
+
+<span class="comment">% Parallel Processing of Velocities</span>
+<span class="comment">% Implement multi-thread operations to loop through the different velocities</span>
+<span class="comment">% The parallel processing means a blade can be evaluated at multiple velocities</span>
+<span class="comment">% at the same time/wall-time. This can improve optimisation wall-times by</span>
+<span class="comment">% 4-10x faster performance.</span>
+
+<span class="keyword">parfor</span> pn=1:N+1
+    lowerbandv0=MinV0+((pn-1)*V0delta); <span class="comment">% Calculate lower V0 in V band</span>
+    <span class="comment">% Evaluate blade at a V0</span>
+    [~,momentHold(pn),~,powerHold(pn),def_yHold(pn),def_zHold(pn)]=<span class="keyword">...</span>
+        WTSingleVelocity(lowerbandv0, bladeConfig(1), bladeConfig(2),<span class="keyword">...</span>
+        bladeConfig(3), TipRadius,RootRadius, B,globaldata);
+<span class="keyword">end</span>
+
+<span class="comment">% AEP Calculations</span>
+<span class="comment">% Evaluate power at a velocity band e.g. 5-6 m/s giving V0=5.5 m/s</span>
+
+<span class="comment">% Loop through each band</span>
+<span class="keyword">for</span> vn=1:N
+    <span class="comment">% Calculate the token local velocity and band values</span>
+    local_v=MinV0+((vn-0.5)*V0delta);
+    lowerbandv0=MinV0+((vn-1)*V0delta);
+    upperbandv0=lowerbandv0+V0delta;
+
+    <span class="comment">% Check if bending moments or tip deflection are limits</span>
+    <span class="comment">% This can be overrided by setting the global flag 'overrideLimits'=True</span>
+    <span class="comment">% If a limit is breached, the turbine is "turned off" by setting the</span>
+    <span class="comment">% power at that velocity to zero.</span>
+    <span class="keyword">if</span>(max(momentHold(vn),momentHold(vn+1))&gt;globaldata.M_rootmax &amp;&amp;<span class="keyword">...</span>
+            globaldata.flags.overrideLimits==false)
+        local_power=0; <span class="comment">% Turn off turbine</span>
+        <span class="comment">%disp(['Moment Limit Exceeded: ' num2str(max(momentHold))]);</span>
+    <span class="keyword">elseif</span>(max(abs(def_zHold(vn)),abs(def_zHold(vn+1)))&gt;3 &amp;&amp;<span class="keyword">...</span>
+            globaldata.flags.overrideLimits==false)
+        local_power=0; <span class="comment">% Turn off turbine</span>
+        <span class="comment">%disp(['Deflections Exceeded - z: ' num2str(abs(def_zHold(end)))]);</span>
+    <span class="keyword">else</span>
+        <span class="comment">% Otherwise calculate local power</span>
+        local_power=0.5*(powerHold(1,vn)+powerHold(1,vn+1));
+        <span class="keyword">if</span> local_power&lt;0
+            local_power=0;
+        <span class="keyword">end</span>
+        <span class="comment">%disp(['Deflections Exceeded - z: ' num2str(abs(def_zHold(end)))]);</span>
+    <span class="keyword">end</span>
+
+    <span class="comment">% Calculate Weibull probability for wind speed</span>
+    local_prob=windProb(A,k,lowerbandv0,upperbandv0);
+    <span class="comment">% Calculate ideal power with same conditions with betz Limit</span>
+    local_ideal_power=(0.5*1.225*(pi*(TipRadius^2-RootRadius^2))*local_v^3)*(16/27);
+
+    <span class="comment">% Calculate local AEP and the difference to ideal</span>
+    local_AEP=local_power*local_prob*8760;
+    local_AEP_ideal=local_ideal_power*local_prob*8760;
+    local_diff=local_AEP_ideal-local_AEP;
+    local_eff=local_AEP/local_AEP_ideal;
+
+    <span class="comment">% Save this velocity and data into the S3 matrix</span>
+    S3(vn,:)=[local_v, local_power, local_prob, local_AEP, local_AEP_ideal,<span class="keyword">...</span>
+        local_diff, local_eff, abs(def_zHold(vn))];
+<span class="keyword">end</span>
+
+<span class="comment">% Calculate total AEP for wind range by summing velocity band values</span>
+AEP=sum(S3(:,4));
+<span class="comment">% Calculate the difference between the calcualted AEP and Ideal  for use as</span>
+<span class="comment">% Cost in optimiser.</span>
+total_diff=sum(S3(:,6));
+
+<span class="keyword">end</span>
+</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2018b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+function [total_diff, AEP, S3] = WTVelocityRange(bladeConfig, A, k, omega,...
+                                 MeanChord, TipRadius, RootRadius, B, MinV0,...
+                                 MaxV0,globaldata)
+                             
+%3: ANNUAL ENERGY - loop WTSingleVelocity to find the moments across the
+%entire velocity range. Combine this with the frequency information to get
+%the AEP.
+
+% Set Up
+N=20; % Number of nodes to evaluate
+V0delta=(MaxV0-MinV0)/N; % Find the velocity delta for each node
+S3=zeros(N,8); %Create empty matrix for S3 results
+% Pre-allocate arrays
+powerHold=zeros(1,N+1); % Blade Powers
+momentHold=zeros(1,N+1); % Root Bending Moments
+def_yHold=zeros(1,N+1); % Tip Deflection in y
+def_zHold=zeros(1,N+1); % Tip Deflection in z
+
+% Parallel Processing of Velocities
+% Implement multi-thread operations to loop through the different velocities
+% The parallel processing means a blade can be evaluated at multiple velocities
+% at the same time/wall-time. This can improve optimisation wall-times by
+% 4-10x faster performance.
+
+parfor pn=1:N+1
+    lowerbandv0=MinV0+((pn-1)*V0delta); % Calculate lower V0 in V band
+    % Evaluate blade at a V0
+    [~,momentHold(pn),~,powerHold(pn),def_yHold(pn),def_zHold(pn)]=...
+        WTSingleVelocity(lowerbandv0, bladeConfig(1), bladeConfig(2),...
+        bladeConfig(3), TipRadius,RootRadius, B,globaldata);
+end
+
+% AEP Calculations
+% Evaluate power at a velocity band e.g. 5-6 m/s giving V0=5.5 m/s
+
+% Loop through each band
+for vn=1:N
+    % Calculate the token local velocity and band values
+    local_v=MinV0+((vn-0.5)*V0delta);
+    lowerbandv0=MinV0+((vn-1)*V0delta);
+    upperbandv0=lowerbandv0+V0delta;
+    
+    % Check if bending moments or tip deflection are limits
+    % This can be overrided by setting the global flag 'overrideLimits'=True
+    % If a limit is breached, the turbine is "turned off" by setting the
+    % power at that velocity to zero.
+    if(max(momentHold(vn),momentHold(vn+1))>globaldata.M_rootmax &&...
+            globaldata.flags.overrideLimits==false)
+        local_power=0; % Turn off turbine
+        %disp(['Moment Limit Exceeded: ' num2str(max(momentHold))]);
+    elseif(max(abs(def_zHold(vn)),abs(def_zHold(vn+1)))>3 &&...
+            globaldata.flags.overrideLimits==false)
+        local_power=0; % Turn off turbine
+        %disp(['Deflections Exceeded - z: ' num2str(abs(def_zHold(end)))]);
+    else
+        % Otherwise calculate local power
+        local_power=0.5*(powerHold(1,vn)+powerHold(1,vn+1));
+        if local_power<0
+            local_power=0;
+        end
+        %disp(['Deflections Exceeded - z: ' num2str(abs(def_zHold(end)))]);
+    end
+    
+    % Calculate Weibull probability for wind speed
+    local_prob=windProb(A,k,lowerbandv0,upperbandv0);
+    % Calculate ideal power with same conditions with betz Limit
+    local_ideal_power=(0.5*1.225*(pi*(TipRadius^2-RootRadius^2))*local_v^3)*(16/27);
+    
+    % Calculate local AEP and the difference to ideal
+    local_AEP=local_power*local_prob*8760;
+    local_AEP_ideal=local_ideal_power*local_prob*8760;
+    local_diff=local_AEP_ideal-local_AEP;
+    local_eff=local_AEP/local_AEP_ideal;
+    
+    % Save this velocity and data into the S3 matrix
+    S3(vn,:)=[local_v, local_power, local_prob, local_AEP, local_AEP_ideal,...
+        local_diff, local_eff, abs(def_zHold(vn))];
+end
+
+% Calculate total AEP for wind range by summing velocity band values
+AEP=sum(S3(:,4));
+% Calculate the difference between the calcualted AEP and Ideal  for use as
+% Cost in optimiser.
+total_diff=sum(S3(:,6));
+
+end
+##### SOURCE END #####
+--></body></html>

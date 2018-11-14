@@ -1,0 +1,266 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>checkOptima</title><meta name="generator" content="MATLAB 9.5"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2018-11-14"><meta name="DC.source" content="checkOptima.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><pre class="codeinput"><span class="keyword">function</span> [xdeg_co] = checkOptima(x,globaldata)
+<span class="comment">%CHECKOPTIMA Produces graphs holding 2 params constant and varying the other.</span>
+<span class="comment">%   Helps show solution is optimal.</span>
+
+globaldata.flags.overrideLimits=false;
+globaldata.flags.tiploss=true;
+<span class="comment">% Changing Theta 0</span>
+N=400; <span class="comment">% Mesh resolution</span>
+variableSpace=linspace(deg2rad(2),deg2rad(18),N); <span class="comment">% Create theta values</span>
+aepHold=zeros(1,N); <span class="comment">% Pre-allocate AEP holding array</span>
+progressbar(<span class="string">'Finding AEPs - Changing Theta'</span>); <span class="comment">% Init progres bar</span>
+
+globaldata.flags.overrideLimits=false; <span class="comment">% Ignore bending limits first time.</span>
+
+<span class="comment">% Loop through the different theta0 values, AEP to holding array</span>
+<span class="keyword">for</span> i=1:N
+    [~, aepHold(i), ~] = WTVelocityRange([variableSpace(i),x(2),x(3)],<span class="keyword">...</span>
+        globaldata.A, globaldata.k, globaldata.w, globaldata.c_mean,<span class="keyword">...</span>
+        globaldata.Rmax, globaldata.Rmin, globaldata.B, globaldata.Vmin,<span class="keyword">...</span>
+        globaldata.Vmax, globaldata);
+    progressbar(i/N);
+<span class="keyword">end</span>
+
+<span class="comment">% Init figure and plot theta vs aep</span>
+f7=figure(7);
+plot(rad2deg(variableSpace),aepHold,<span class="string">'r-'</span>);
+xdeg_co=[rad2deg(x(1)),rad2deg(x(2)),x(3)];
+title(<span class="string">'Check Optima - Changing Theta0 Only'</span>);
+xlabel(<span class="string">'Initial Blade Angle Theta (&deg;)'</span>);
+ylabel(<span class="string">'AEP (Whr/yr)'</span>);
+hold <span class="string">on</span>;
+plot([xdeg_co(1),xdeg_co(1)],ylim,<span class="string">'b-'</span>);
+legend({<span class="string">'AEP Profile'</span>,[<span class="string">'Found Solution: '</span> num2str(xdeg_co(1)) <span class="string">'$^\circ$'</span>] },<span class="keyword">...</span>
+    <span class="string">'Interpreter'</span>,<span class="string">'Latex'</span>,<span class="string">'Location'</span>,<span class="keyword">...</span>
+    <span class="string">'Northeast'</span>);
+grid <span class="string">on</span>;
+saveas(f7,<span class="string">'graphs/optima_theta.png'</span>);
+
+
+<span class="comment">% Changing Theta twist</span>
+N=400; <span class="comment">% Mesh resolution</span>
+variableSpace=linspace(deg2rad(-1.5),deg2rad(0.5),N); <span class="comment">% Create theta_tw values</span>
+aepHold=zeros(1,N); <span class="comment">% pre-allocate AEP holding array</span>
+progressbar(<span class="string">'Finding AEPs - Changing Theta Twist'</span>); <span class="comment">% Init progress bar</span>
+<span class="comment">% Loop through twist values</span>
+<span class="keyword">for</span> i=1:N
+    [~, aepHold(i), ~] = WTVelocityRange([x(1),variableSpace(i),x(3)], globaldata.A,<span class="keyword">...</span>
+        globaldata.k, globaldata.w, globaldata.c_mean, globaldata.Rmax,<span class="keyword">...</span>
+        globaldata.Rmin, globaldata.B, globaldata.Vmin, globaldata.Vmax,<span class="keyword">...</span>
+        globaldata);
+    progressbar(i/N);
+<span class="keyword">end</span>
+<span class="comment">% Create figure and plot theta_twist vs aep.</span>
+f8=figure(8);
+plot(rad2deg(variableSpace),aepHold,<span class="string">'r-'</span>);
+xdeg_co=[rad2deg(x(1)),rad2deg(x(2)),x(3)];
+title(<span class="string">'Check Optima - Changing Theta Twist Rate Only'</span>);
+xlabel(<span class="string">'Blade Twist (&deg;/m)'</span>);
+ylabel(<span class="string">'AEP (Whr/yr)'</span>);
+hold <span class="string">on</span>;
+plot([xdeg_co(2),xdeg_co(2)],ylim,<span class="string">'b-'</span>);
+legend({<span class="string">'AEP Profile'</span>,[<span class="string">'Found Solution: '</span> num2str(xdeg_co(2)) <span class="string">'$^\circ$/m'</span>]},<span class="keyword">...</span>
+    <span class="string">'Interpreter'</span>,<span class="string">'Latex'</span>,<span class="string">'Location'</span>,<span class="keyword">...</span>
+    <span class="string">'Northeast'</span>);
+grid <span class="string">on</span>;
+saveas(f8,<span class="string">'graphs/optima_theta_twist.png'</span>);
+
+<span class="comment">% Changing c_grad</span>
+N=400; <span class="comment">% Mesh resolution</span>
+variableSpace=linspace(-0.1,0.1,N); <span class="comment">% Create chord gradient values.</span>
+aepHold=zeros(1,N); <span class="comment">% Pre-allocate aep holding array</span>
+progressbar(<span class="string">'Finding AEPs - Changing Chord Gradient'</span>); <span class="comment">% Init progress bar.</span>
+
+<span class="comment">% Loop through chord gradients.</span>
+<span class="keyword">for</span> i=1:N
+    [~, aepHold(i), ~] = WTVelocityRange([x(1),x(2),variableSpace(i)], globaldata.A,<span class="keyword">...</span>
+        globaldata.k, globaldata.w, globaldata.c_mean, globaldata.Rmax,<span class="keyword">...</span>
+        globaldata.Rmin, globaldata.B, globaldata.Vmin, globaldata.Vmax,<span class="keyword">...</span>
+        globaldata);
+    progressbar(i/N);
+<span class="keyword">end</span>
+<span class="comment">% Create figure and plot chord gradients vs aep</span>
+f9=figure(9);
+plot(variableSpace,aepHold,<span class="string">'r-'</span>);
+xdeg_co=[rad2deg(x(1)),rad2deg(x(2)),x(3)];
+title(<span class="string">'Check Optima - Changing Chord Gradient Only'</span>);
+xlabel(<span class="string">'Chord Gradient'</span>);
+ylabel(<span class="string">'AEP (Whr/yr)'</span>);
+hold <span class="string">on</span>;
+plot([xdeg_co(3),xdeg_co(3)],ylim,<span class="string">'b-'</span>);
+legend({<span class="string">'AEP Profile'</span>,[<span class="string">'Found Solution: '</span> num2str(xdeg_co(3))]},<span class="string">'Interpreter'</span>,<span class="keyword">...</span>
+    <span class="string">'Latex'</span>,<span class="string">'Location'</span>,<span class="keyword">...</span>
+    <span class="string">'Northwest'</span>);
+grid <span class="string">on</span>;
+saveas(f9,<span class="string">'graphs/optima_c_grad.png'</span>);
+<span class="keyword">end</span>
+</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2018b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+function [xdeg_co] = checkOptima(x,globaldata)
+%CHECKOPTIMA Produces graphs holding 2 params constant and varying the other.
+%   Helps show solution is optimal.
+
+globaldata.flags.overrideLimits=false;
+globaldata.flags.tiploss=true;
+% Changing Theta 0
+N=400; % Mesh resolution
+variableSpace=linspace(deg2rad(2),deg2rad(18),N); % Create theta values
+aepHold=zeros(1,N); % Pre-allocate AEP holding array
+progressbar('Finding AEPs - Changing Theta'); % Init progres bar
+
+globaldata.flags.overrideLimits=false; % Ignore bending limits first time.
+
+% Loop through the different theta0 values, AEP to holding array
+for i=1:N
+    [~, aepHold(i), ~] = WTVelocityRange([variableSpace(i),x(2),x(3)],...
+        globaldata.A, globaldata.k, globaldata.w, globaldata.c_mean,...
+        globaldata.Rmax, globaldata.Rmin, globaldata.B, globaldata.Vmin,...
+        globaldata.Vmax, globaldata);
+    progressbar(i/N);
+end
+
+% Init figure and plot theta vs aep
+f7=figure(7);
+plot(rad2deg(variableSpace),aepHold,'r-');
+xdeg_co=[rad2deg(x(1)),rad2deg(x(2)),x(3)];
+title('Check Optima - Changing Theta0 Only');
+xlabel('Initial Blade Angle Theta (°)');
+ylabel('AEP (Whr/yr)');
+hold on;
+plot([xdeg_co(1),xdeg_co(1)],ylim,'b-');
+legend({'AEP Profile',['Found Solution: ' num2str(xdeg_co(1)) '$^\circ$'] },...
+    'Interpreter','Latex','Location',...
+    'Northeast');
+grid on;
+saveas(f7,'graphs/optima_theta.png');
+
+
+% Changing Theta twist
+N=400; % Mesh resolution
+variableSpace=linspace(deg2rad(-1.5),deg2rad(0.5),N); % Create theta_tw values
+aepHold=zeros(1,N); % pre-allocate AEP holding array
+progressbar('Finding AEPs - Changing Theta Twist'); % Init progress bar
+% Loop through twist values
+for i=1:N
+    [~, aepHold(i), ~] = WTVelocityRange([x(1),variableSpace(i),x(3)], globaldata.A,...
+        globaldata.k, globaldata.w, globaldata.c_mean, globaldata.Rmax,...
+        globaldata.Rmin, globaldata.B, globaldata.Vmin, globaldata.Vmax,...
+        globaldata);
+    progressbar(i/N);
+end
+% Create figure and plot theta_twist vs aep.
+f8=figure(8);
+plot(rad2deg(variableSpace),aepHold,'r-');
+xdeg_co=[rad2deg(x(1)),rad2deg(x(2)),x(3)];
+title('Check Optima - Changing Theta Twist Rate Only');
+xlabel('Blade Twist (°/m)');
+ylabel('AEP (Whr/yr)');
+hold on;
+plot([xdeg_co(2),xdeg_co(2)],ylim,'b-');
+legend({'AEP Profile',['Found Solution: ' num2str(xdeg_co(2)) '$^\circ$/m']},...
+    'Interpreter','Latex','Location',...
+    'Northeast');
+grid on;
+saveas(f8,'graphs/optima_theta_twist.png');
+
+% Changing c_grad
+N=400; % Mesh resolution
+variableSpace=linspace(-0.1,0.1,N); % Create chord gradient values.
+aepHold=zeros(1,N); % Pre-allocate aep holding array
+progressbar('Finding AEPs - Changing Chord Gradient'); % Init progress bar.
+
+% Loop through chord gradients.
+for i=1:N
+    [~, aepHold(i), ~] = WTVelocityRange([x(1),x(2),variableSpace(i)], globaldata.A,...
+        globaldata.k, globaldata.w, globaldata.c_mean, globaldata.Rmax,...
+        globaldata.Rmin, globaldata.B, globaldata.Vmin, globaldata.Vmax,...
+        globaldata);
+    progressbar(i/N);
+end
+% Create figure and plot chord gradients vs aep
+f9=figure(9);
+plot(variableSpace,aepHold,'r-');
+xdeg_co=[rad2deg(x(1)),rad2deg(x(2)),x(3)];
+title('Check Optima - Changing Chord Gradient Only');
+xlabel('Chord Gradient');
+ylabel('AEP (Whr/yr)');
+hold on;
+plot([xdeg_co(3),xdeg_co(3)],ylim,'b-');
+legend({'AEP Profile',['Found Solution: ' num2str(xdeg_co(3))]},'Interpreter',...
+    'Latex','Location',...
+    'Northwest');
+grid on;
+saveas(f9,'graphs/optima_c_grad.png');
+end
+
+
+##### SOURCE END #####
+--></body></html>

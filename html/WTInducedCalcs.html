@@ -1,0 +1,288 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>WTInducedCalcs</title><meta name="generator" content="MATLAB 9.5"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2018-11-14"><meta name="DC.source" content="WTInducedCalcs.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><pre class="codeinput"><span class="keyword">function</span> [a_out, adash_out, alpha, Cn, Ct,Vrel,curr_tol, i] = <span class="keyword">...</span>
+    WTInducedCalcs(a, adash, V0, omega, y, theta, Chord,TipRadius,globaldata)
+
+<span class="comment">%S1: SINGLE ELEMENT: use an iterative solution to find the values of a,</span>
+<span class="comment">%adash, phi, Cn and Ct at a particular radius.</span>
+
+<span class="comment">% Set Up</span>
+curr_tol=1; <span class="comment">% Dummy current error tolerance</span>
+looplimit=500; <span class="comment">% Max number of loops before giving up.</span>
+adash_looplimit=150; <span class="comment">% Number of loops before holding adash to zero.</span>
+relax_looplimit=50; <span class="comment">% Number of loops before relaxation factor is used.</span>
+etol_local=globaldata.etol;
+solidity=(globaldata.B*Chord)/(2*pi*y); <span class="comment">% Calcualte solidity for this annulus.</span>
+
+<span class="comment">%init and adash from function input.</span>
+a_in=a;
+adash_in=adash;
+
+<span class="comment">% Converging Loop</span>
+<span class="comment">% Loop through the a/a' system of equations to find coefficients</span>
+<span class="keyword">for</span> i=1:looplimit
+
+    phi_flow=atan(((1-a_in)*V0)/((1+adash_in)*omega*y)); <span class="comment">% Calculate phi flow angle</span>
+    alpha=phi_flow-theta; <span class="comment">%Calculate alpha</span>
+
+    <span class="comment">% Find relative velocity  the airfoil sees</span>
+    Vrel=((V0*(1-a_in))^2 + (omega*y*(1+adash_in))^2)^0.5;
+    re=RE(1.225,Vrel,Chord,1.81e-5); <span class="comment">% Calculate Reynolds Number</span>
+    [Cl, Cd]=ForceCoefficient(alpha,re); <span class="comment">% Calculate/Look Up Cl,Cd</span>
+
+    <span class="comment">%Convert to normal and tangential forces.</span>
+    Cn=(Cl*cos(phi_flow))+(Cd*sin(phi_flow));
+    Ct=(Cl*sin(phi_flow))-(Cd*cos(phi_flow));
+
+    <span class="keyword">if</span>(globaldata.flags.tiploss==true)
+        <span class="comment">%Use Tip Losses if flag set</span>
+        <span class="comment">%From Hansen</span>
+        f=(globaldata.B*(TipRadius-y))/(2*y*sin(phi_flow));
+        F=(2/pi)*acos(exp(-f));
+
+        <span class="comment">% Use tip losses coefficients to calcualte new a/a'</span>
+        a_out=1/(((4*F*((sin(phi_flow))^2))/(solidity*Cn))+1);
+        adash_out=1/(((4*F*(sin(phi_flow)*cos(phi_flow)))/(solidity*Ct))-1);
+    <span class="keyword">else</span>
+        <span class="comment">% If tip losses flag is not set, use older BEMT with no tip losses</span>
+        a_out=1/(((4*((sin(phi_flow))^2))/(solidity*Cn))+1);
+        adash_out=1/(((4*(sin(phi_flow)*cos(phi_flow)))/(solidity*Ct))-1);
+    <span class="keyword">end</span>
+
+
+    <span class="comment">% Test for convergance/loop settings/errors</span>
+    <span class="comment">% If a' set to zero, calculate convergence tolerance on a only.</span>
+    <span class="keyword">if</span> i&lt;adash_looplimit
+        curr_tol=abs(a_out-a_in)+abs(adash_out-adash_in);
+    <span class="keyword">else</span>
+        curr_tol=abs(a_out-a_in);
+    <span class="keyword">end</span>
+
+    <span class="comment">% Check error tolerance for convergence If not:</span>
+    <span class="keyword">if</span> curr_tol&gt;etol_local
+        <span class="comment">% Check if loop at point that triggers relaxing</span>
+        <span class="keyword">if</span>(i&lt;relax_looplimit)
+            k=1;
+        <span class="keyword">else</span>
+            k=0.1;
+        <span class="keyword">end</span>
+
+        <span class="comment">% Set new a</span>
+        a_in=(k*(a_out-a_in))+a_in;
+        <span class="comment">% See if a near boundaries. Caches NaN,Inf,Complex errors</span>
+        <span class="comment">% Often caused by floating point allowing a/a' to leave 0&lt;a/a'&lt;1 range</span>
+        <span class="keyword">if</span> a_in&gt;1
+            a_in=1;
+        <span class="keyword">elseif</span> a_in&lt;0
+            a_in=0;
+        <span class="keyword">end</span>
+
+        <span class="comment">% If a' still in use</span>
+        <span class="keyword">if</span> i&lt;adash_looplimit
+            <span class="comment">% Calculate new a'</span>
+            adash_in=(k*(adash_out-adash_in))+adash_in;
+            <span class="comment">% See if a' near boundaries. Caches NaN,Inf,Complex errors</span>
+            <span class="comment">% Often caused by floating point allowing a/a' to leave 0&lt;a/a'&lt;1 range</span>
+            <span class="keyword">if</span> ~isreal(adash_in)
+                <span class="comment">% If complex, relax a'</span>
+                adash_in=real(adash_in)*0.95;
+            <span class="keyword">end</span>
+            <span class="keyword">if</span> adash_in&gt;1
+            adash_in=0.99;
+            <span class="keyword">elseif</span> adash_in&lt;0
+            adash_in=0.01;
+            <span class="keyword">end</span>
+
+        <span class="keyword">else</span>
+            <span class="comment">% If over loop count for a', set to zero.</span>
+            adash_in=0;
+            adash_out=0;
+        <span class="keyword">end</span>
+
+    <span class="keyword">else</span>
+        <span class="comment">%If within tollerance then break out and return</span>
+        <span class="keyword">break</span>
+    <span class="keyword">end</span>
+
+<span class="keyword">end</span>
+
+<span class="keyword">end</span>
+</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2018b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+function [a_out, adash_out, alpha, Cn, Ct,Vrel,curr_tol, i] = ...
+    WTInducedCalcs(a, adash, V0, omega, y, theta, Chord,TipRadius,globaldata)
+
+%S1: SINGLE ELEMENT: use an iterative solution to find the values of a,
+%adash, phi, Cn and Ct at a particular radius.
+
+% Set Up
+curr_tol=1; % Dummy current error tolerance
+looplimit=500; % Max number of loops before giving up.
+adash_looplimit=150; % Number of loops before holding adash to zero.
+relax_looplimit=50; % Number of loops before relaxation factor is used.
+etol_local=globaldata.etol;
+solidity=(globaldata.B*Chord)/(2*pi*y); % Calcualte solidity for this annulus.
+
+%init and adash from function input.
+a_in=a;
+adash_in=adash;
+
+% Converging Loop
+% Loop through the a/a' system of equations to find coefficients
+for i=1:looplimit
+    
+    phi_flow=atan(((1-a_in)*V0)/((1+adash_in)*omega*y)); % Calculate phi flow angle
+    alpha=phi_flow-theta; %Calculate alpha
+    
+    % Find relative velocity  the airfoil sees
+    Vrel=((V0*(1-a_in))^2 + (omega*y*(1+adash_in))^2)^0.5; 
+    re=RE(1.225,Vrel,Chord,1.81e-5); % Calculate Reynolds Number
+    [Cl, Cd]=ForceCoefficient(alpha,re); % Calculate/Look Up Cl,Cd
+    
+    %Convert to normal and tangential forces.
+    Cn=(Cl*cos(phi_flow))+(Cd*sin(phi_flow));
+    Ct=(Cl*sin(phi_flow))-(Cd*cos(phi_flow));
+    
+    if(globaldata.flags.tiploss==true)
+        %Use Tip Losses if flag set
+        %From Hansen
+        f=(globaldata.B*(TipRadius-y))/(2*y*sin(phi_flow));
+        F=(2/pi)*acos(exp(-f));
+        
+        % Use tip losses coefficients to calcualte new a/a'
+        a_out=1/(((4*F*((sin(phi_flow))^2))/(solidity*Cn))+1);
+        adash_out=1/(((4*F*(sin(phi_flow)*cos(phi_flow)))/(solidity*Ct))-1);
+    else
+        % If tip losses flag is not set, use older BEMT with no tip losses
+        a_out=1/(((4*((sin(phi_flow))^2))/(solidity*Cn))+1);
+        adash_out=1/(((4*(sin(phi_flow)*cos(phi_flow)))/(solidity*Ct))-1);
+    end
+    
+    
+    % Test for convergance/loop settings/errors
+    % If a' set to zero, calculate convergence tolerance on a only.
+    if i<adash_looplimit
+        curr_tol=abs(a_out-a_in)+abs(adash_out-adash_in);
+    else
+        curr_tol=abs(a_out-a_in);
+    end
+    
+    % Check error tolerance for convergence If not:
+    if curr_tol>etol_local
+        % Check if loop at point that triggers relaxing
+        if(i<relax_looplimit)
+            k=1;
+        else
+            k=0.1;
+        end
+        
+        % Set new a
+        a_in=(k*(a_out-a_in))+a_in;
+        % See if a near boundaries. Caches NaN,Inf,Complex errors
+        % Often caused by floating point allowing a/a' to leave 0<a/a'<1 range
+        if a_in>1
+            a_in=1;
+        elseif a_in<0
+            a_in=0;
+        end
+        
+        % If a' still in use
+        if i<adash_looplimit
+            % Calculate new a'
+            adash_in=(k*(adash_out-adash_in))+adash_in;
+            % See if a' near boundaries. Caches NaN,Inf,Complex errors
+            % Often caused by floating point allowing a/a' to leave 0<a/a'<1 range
+            if ~isreal(adash_in)
+                % If complex, relax a'
+                adash_in=real(adash_in)*0.95;
+            end
+            if adash_in>1
+            adash_in=0.99;
+            elseif adash_in<0
+            adash_in=0.01;
+            end
+            
+        else
+            % If over loop count for a', set to zero.
+            adash_in=0;
+            adash_out=0;
+        end
+        
+    else
+        %If within tollerance then break out and return
+        break
+    end
+    
+end
+
+end
+
+
+##### SOURCE END #####
+--></body></html>

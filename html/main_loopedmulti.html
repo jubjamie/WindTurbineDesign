@@ -1,0 +1,326 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>main_loopedmulti</title><meta name="generator" content="MATLAB 9.5"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2018-11-14"><meta name="DC.source" content="main_loopedmulti.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><pre class="codeinput"><span class="comment">% Main script for WindTurbine Problem</span>
+close <span class="string">all</span>
+
+<span class="comment">% Part B Optimisation</span>
+<span class="comment">% Aim to minimise the difference returned by AEP S3 calcs</span>
+
+<span class="comment">% Setup</span>
+<span class="comment">% Set global data structure to pass around global variables.</span>
+globaldata=[];
+<span class="comment">% Create Log File</span>
+[globaldata.logid, logpath]=createlog(<span class="string">'Part B Multi-Optimiser'</span>);
+
+globaldata.etol=0.0001; <span class="comment">% Set WTInducedCalcs initial tolerance</span>
+globaldata.A=7; <span class="comment">% Set Weibull Constant</span>
+globaldata.k=1.8; <span class="comment">% Set Weibull Constant</span>
+globaldata.w=30*2*pi/60; <span class="comment">% Set rpm</span>
+globaldata.Vmin=5; <span class="comment">% Set minimum wind speed</span>
+globaldata.Vmax=25; <span class="comment">% Set maximum wind speed</span>
+globaldata.c_mean=1; <span class="comment">% Set mean chord.</span>
+globaldata.Rmin=1; <span class="comment">% Set hub radius</span>
+globaldata.Rmax=20; <span class="comment">% Set maximum blade radius</span>
+globaldata.B=3; <span class="comment">% Set number of blades</span>
+globaldata.M_rootmax=0.5e6; <span class="comment">% Set max root bending moment.</span>
+
+<span class="comment">% System/Settings</span>
+globaldata.ms.pos=1; <span class="comment">% Count multistarting position.</span>
+globaldata.flags.tiploss=true; <span class="comment">% Flag to enable tip losses</span>
+globaldata.flags.overrideLimits=false; <span class="comment">% Flag to abide by bending limits</span>
+
+tic; <span class="comment">% Start timing run (for bench marking)</span>
+
+<span class="comment">% Set up optimiser</span>
+paramStepSize=[4,3,2]; <span class="comment">% Set intervals for multistart to evaluate</span>
+globaldata.ms.loops=prod(paramStepSize); <span class="comment">% Count number of permutations</span>
+progressbar(<span class="string">'Optimisation'</span>); <span class="comment">% Initialise progress bar.</span>
+
+globaldata.maxiters=100; <span class="comment">% Set max number of simplex iterations/input</span>
+
+opts = optimset(<span class="string">'fminsearch'</span>); <span class="comment">% Set options default.</span>
+opts.Display = <span class="string">'iter'</span>; <span class="comment">%Display progress in command window</span>
+opts.TolX = 0.0001; <span class="comment">%Tolerance on the variation in the parameters</span>
+opts.TolFun = 1000; <span class="comment">%Tolerance on cost. Large as Diff is of large order.</span>
+<span class="comment">% Define initial output function for optimiser as anonymous function.</span>
+opts.OutputFcn = @(x,optimValues,state)optMonitor(x,optimValues,state,globaldata);
+opts.MaxIter = globaldata.maxiters-1; <span class="comment">% Set number of iterations.</span>
+
+<span class="comment">% Set multistart bounds.</span>
+UBs=[deg2rad(20) deg2rad(0.5) 0.099]; <span class="comment">% Upper bounds</span>
+LBs=[deg2rad(2) deg2rad(-2) -0.1]; <span class="comment">% Lower bounds</span>
+
+<span class="comment">% Create linear space of thetas and remove the bound values.</span>
+thetas=linspace(LBs(1),UBs(1),paramStepSize(1)+2);
+thetas(1)=[]; thetas(end)=[];
+<span class="comment">% Create linear space of theta twists and remove the bound values.</span>
+theta_twists=linspace(LBs(2),UBs(2),paramStepSize(2)+2);
+theta_twists(1)=[]; theta_twists(end)=[];
+<span class="comment">% Create linear space of chord cradients and remove the bound values.</span>
+c_grads=linspace(LBs(3),UBs(3),paramStepSize(3)+2);
+c_grads(1)=[]; c_grads(end)=[];
+
+<span class="comment">% Optimiser</span>
+<span class="comment">% Dummy values for Current best diff/bladeConfig (aka x-input values)</span>
+curr_best_diff=1e11;
+curr_best_x=[0 0 0];
+
+<span class="comment">% Permutate through initial values</span>
+<span class="keyword">for</span> i=1:paramStepSize(1)
+    <span class="keyword">for</span> j=1:paramStepSize(2)
+        <span class="keyword">for</span> k=1:paramStepSize(3)
+            <span class="comment">% Calculate permutation number for progress calculation</span>
+            globaldata.ms.pos=((i-1)*(paramStepSize(2)*paramStepSize(3)))+<span class="keyword">...</span>
+                           ((j-1)*paramStepSize(3))+k;
+               <span class="comment">% Update output fcn definition with updated globaldata.</span>
+               opts.OutputFcn = @(x,optimValues,state)optMonitor(x,<span class="keyword">...</span>
+                   optimValues,state,globaldata);
+               <span class="comment">% Set Balde Config</span>
+               curr_x_ins=[thetas(i) theta_twists(j) c_grads(k)];
+               <span class="comment">%Run optimiser on input permutation</span>
+               [x, diff, exitflag] = fminsearchbnd(@(x)aepCost(x,<span class="keyword">...</span>
+                   globaldata), curr_x_ins, LBs, UBs, opts);
+               <span class="comment">% If solution is better than previous, update current bests.</span>
+               <span class="keyword">if</span> diff&lt;curr_best_diff
+                    curr_best_diff=diff;
+                    curr_best_x=x;
+               <span class="keyword">end</span>
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+<span class="comment">% Outputs</span>
+<span class="comment">% Place input values into workspace as more accessible variables.</span>
+xdeg=[rad2deg(curr_best_x(1)),rad2deg(curr_best_x(2)),curr_best_x(3)];
+x=curr_best_x;
+
+disp(<span class="string">'Optimiser Finished'</span>);
+
+runtimer=toc; <span class="comment">% Stop timing core code</span>
+
+progressbar(1); <span class="comment">% Close progress bar</span>
+
+<span class="comment">%Save results as status images for Github and into the log file.</span>
+statustablematrix(xdeg, {<span class="string">'Theta'</span>,<span class="string">'Theta_Twist'</span>,<span class="string">'c_grad'</span>},<span class="keyword">...</span>
+    <span class="string">'status/optSolSmall.png'</span>, <span class="string">'Optimiser Results'</span>,<span class="string">'print'</span>,1.2);
+fprintf(globaldata.logid,<span class="string">'\r\nFINAL SOLUTION\r\n'</span>);
+fprintf(globaldata.logid,<span class="string">'Theta: %f deg.  Theta tw: %f deg.  c_grad: %f\r\n'</span>,<span class="keyword">...</span>
+    xdeg(1),xdeg(2),xdeg(3));
+
+<span class="comment">%Ask if user wants to run the lastSolution script on the optimal values.</span>
+runSolutionInput=questdlg(<span class="string">'Parse solution through S3?'</span>,<span class="keyword">...</span>
+    <span class="string">'Solution Viewer'</span>,<span class="string">'Yes'</span>,<span class="string">'No'</span>,<span class="string">'No'</span>);
+<span class="keyword">switch</span> runSolutionInput
+    <span class="keyword">case</span> <span class="string">'Yes'</span>
+       run(<span class="string">'lastSolution'</span>);
+
+
+<span class="keyword">end</span>
+
+<span class="comment">% Clean Up</span>
+<span class="comment">% Finish and close logs and progress bars.</span>
+fprintf(globaldata.logid,<span class="string">'\r\n&gt; &gt; &gt; END &lt; &lt; &lt;\r\n'</span>);
+fprintf(globaldata.logid,<span class="string">'Tests Completed in %f seconds---\r\n'</span>,runtimer);
+progressbar(1);
+fclose(globaldata.logid);
+<span class="comment">% Display core code run time</span>
+disp([<span class="string">'Core Completed in '</span> num2str(runtimer) <span class="string">' seconds'</span>]);
+<span class="comment">% Display link to log in command window.</span>
+disp([<span class="string">'&lt;a href = "../logs/'</span> logpath <span class="string">'.log"&gt;Open Session Log&lt;/a&gt;'</span>]);
+</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2018b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+% Main script for WindTurbine Problem
+close all
+
+% Part B Optimisation
+% Aim to minimise the difference returned by AEP S3 calcs
+
+% Setup
+% Set global data structure to pass around global variables.
+globaldata=[];
+% Create Log File
+[globaldata.logid, logpath]=createlog('Part B Multi-Optimiser');
+
+globaldata.etol=0.0001; % Set WTInducedCalcs initial tolerance
+globaldata.A=7; % Set Weibull Constant
+globaldata.k=1.8; % Set Weibull Constant
+globaldata.w=30*2*pi/60; % Set rpm
+globaldata.Vmin=5; % Set minimum wind speed
+globaldata.Vmax=25; % Set maximum wind speed
+globaldata.c_mean=1; % Set mean chord.
+globaldata.Rmin=1; % Set hub radius
+globaldata.Rmax=20; % Set maximum blade radius
+globaldata.B=3; % Set number of blades
+globaldata.M_rootmax=0.5e6; % Set max root bending moment.
+
+% System/Settings
+globaldata.ms.pos=1; % Count multistarting position.
+globaldata.flags.tiploss=true; % Flag to enable tip losses
+globaldata.flags.overrideLimits=false; % Flag to abide by bending limits
+
+tic; % Start timing run (for bench marking)
+
+% Set up optimiser
+paramStepSize=[4,3,2]; % Set intervals for multistart to evaluate
+globaldata.ms.loops=prod(paramStepSize); % Count number of permutations
+progressbar('Optimisation'); % Initialise progress bar.
+
+globaldata.maxiters=100; % Set max number of simplex iterations/input
+
+opts = optimset('fminsearch'); % Set options default.
+opts.Display = 'iter'; %Display progress in command window
+opts.TolX = 0.0001; %Tolerance on the variation in the parameters
+opts.TolFun = 1000; %Tolerance on cost. Large as Diff is of large order.
+% Define initial output function for optimiser as anonymous function.
+opts.OutputFcn = @(x,optimValues,state)optMonitor(x,optimValues,state,globaldata);
+opts.MaxIter = globaldata.maxiters-1; % Set number of iterations.
+
+% Set multistart bounds.
+UBs=[deg2rad(20) deg2rad(0.5) 0.099]; % Upper bounds
+LBs=[deg2rad(2) deg2rad(-2) -0.1]; % Lower bounds
+
+% Create linear space of thetas and remove the bound values.
+thetas=linspace(LBs(1),UBs(1),paramStepSize(1)+2); 
+thetas(1)=[]; thetas(end)=[];
+% Create linear space of theta twists and remove the bound values.
+theta_twists=linspace(LBs(2),UBs(2),paramStepSize(2)+2);
+theta_twists(1)=[]; theta_twists(end)=[];
+% Create linear space of chord cradients and remove the bound values.
+c_grads=linspace(LBs(3),UBs(3),paramStepSize(3)+2);
+c_grads(1)=[]; c_grads(end)=[];
+
+% Optimiser
+% Dummy values for Current best diff/bladeConfig (aka x-input values)
+curr_best_diff=1e11;
+curr_best_x=[0 0 0];
+
+% Permutate through initial values
+for i=1:paramStepSize(1)
+    for j=1:paramStepSize(2)
+        for k=1:paramStepSize(3)
+            % Calculate permutation number for progress calculation
+            globaldata.ms.pos=((i-1)*(paramStepSize(2)*paramStepSize(3)))+...
+                           ((j-1)*paramStepSize(3))+k;
+               % Update output fcn definition with updated globaldata.      
+               opts.OutputFcn = @(x,optimValues,state)optMonitor(x,...
+                   optimValues,state,globaldata);
+               % Set Balde Config
+               curr_x_ins=[thetas(i) theta_twists(j) c_grads(k)];
+               %Run optimiser on input permutation
+               [x, diff, exitflag] = fminsearchbnd(@(x)aepCost(x,...
+                   globaldata), curr_x_ins, LBs, UBs, opts);
+               % If solution is better than previous, update current bests.
+               if diff<curr_best_diff
+                    curr_best_diff=diff;
+                    curr_best_x=x;          
+               end
+        end
+    end
+end
+
+% Outputs
+% Place input values into workspace as more accessible variables.
+xdeg=[rad2deg(curr_best_x(1)),rad2deg(curr_best_x(2)),curr_best_x(3)];
+x=curr_best_x;
+
+disp('Optimiser Finished');
+
+runtimer=toc; % Stop timing core code
+
+progressbar(1); % Close progress bar
+
+%Save results as status images for Github and into the log file.
+statustablematrix(xdeg, {'Theta','Theta_Twist','c_grad'},...
+    'status/optSolSmall.png', 'Optimiser Results','print',1.2);
+fprintf(globaldata.logid,'\r\nFINAL SOLUTION\r\n');
+fprintf(globaldata.logid,'Theta: %f deg.  Theta tw: %f deg.  c_grad: %f\r\n',...
+    xdeg(1),xdeg(2),xdeg(3));
+
+%Ask if user wants to run the lastSolution script on the optimal values.
+runSolutionInput=questdlg('Parse solution through S3?',...
+    'Solution Viewer','Yes','No','No');
+switch runSolutionInput
+    case 'Yes'
+       run('lastSolution');
+        
+        
+end
+
+% Clean Up
+% Finish and close logs and progress bars.
+fprintf(globaldata.logid,'\r\n> > > END < < <\r\n');
+fprintf(globaldata.logid,'Tests Completed in %f secondsREPLACE_WITH_DASH_DASH-\r\n',runtimer);
+progressbar(1);
+fclose(globaldata.logid);
+% Display core code run time
+disp(['Core Completed in ' num2str(runtimer) ' seconds']);
+% Display link to log in command window.
+disp(['<a href = "../logs/' logpath '.log">Open Session Log</a>']);
+##### SOURCE END #####
+--></body></html>

@@ -1,0 +1,354 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>WTSingleVelocity</title><meta name="generator" content="MATLAB 9.5"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2018-11-14"><meta name="DC.source" content="WTSingleVelocity.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><pre class="codeinput"><span class="keyword">function</span> [Mtot_t, Mtot_n,S2,Power,def_max_y,def_max_z,deflection_distance_z] =<span class="keyword">...</span>
+            WTSingleVelocity(V0, Theta0, ThetaTwist, c_grad, TipRadius,<span class="keyword">...</span>
+            RootRadius, B,globaldata)
+
+<span class="comment">%S2: WHOLE ROTOR - loop WTInducedCalcs to find the values for all radii,</span>
+<span class="comment">%then integrate these to get the normal and tangential moment at the blade</span>
+<span class="comment">%root.</span>
+
+<span class="comment">% Set Up</span>
+N=19; <span class="comment">%set radius element count</span>
+radius_delta=(TipRadius-RootRadius)/(N); <span class="comment">%Increment in radius</span>
+S2=zeros(N,13); <span class="comment">% Pre-allocate empty matrix to hold key values</span>
+
+<span class="comment">% Convinience variables for mean chord and rotational speed</span>
+c_mean_local=globaldata.c_mean;
+w_local=globaldata.w;
+
+<span class="comment">% Pre-allocate empty arrays for nodal powers needed for deflection.</span>
+pts=zeros(1,N+1); <span class="comment">% Pys</span>
+pns=zeros(1,N+1);<span class="comment">% Pzs</span>
+
+<span class="comment">% Main Loop</span>
+<span class="comment">% Loop through all elements (for annulus calcs) and nodes (for deflection calcs)</span>
+<span class="comment">% Note the final node (j=2N+1) is ommitted as it is a boundary condition</span>
+<span class="comment">% set to power = 0.</span>
+<span class="keyword">for</span> j=1:(2*N)
+
+    <span class="comment">% Calculate local radius</span>
+    local_radius=RootRadius+((j-1)*0.5*radius_delta);
+    <span class="comment">% Calculate local chord value using chord gradient</span>
+    local_chord=c_mean_local+((local_radius-((TipRadius-RootRadius)/2))*c_grad);
+    <span class="comment">% Calcualte local theta angle of the blade</span>
+    local_theta=Theta0+(local_radius*ThetaTwist);
+
+    <span class="comment">% Calculate local coefficients for the annuulus centre</span>
+    [a_s1, adash_s1, alpha, Cn_s1, Ct_s1, Vrel, tol_s1, i_s1]=<span class="keyword">...</span>
+        WTInducedCalcs(0.2,0.2,V0,w_local,local_radius,local_theta,<span class="keyword">...</span>
+        local_chord,TipRadius,globaldata);
+
+
+    <span class="comment">%Calculate each moment and power.</span>
+    Mt=(0.5*1.225*local_chord*Ct_s1*Vrel^2)*radius_delta*local_radius;
+    Mn=(0.5*1.225*local_chord*Cn_s1*Vrel^2)*radius_delta*local_radius;
+    pt=Mt/(radius_delta*local_radius);
+    pn=Mn/(radius_delta*local_radius);
+
+    <span class="comment">% Alternate values are used for the main annulus calculation and</span>
+    <span class="comment">% The deflection calculations.</span>
+    <span class="comment">% Odd interations are nodes for deflection needing node power.</span>
+    <span class="comment">% Even interations are elements for annulus calcs</span>
+    <span class="keyword">if</span> mod(j,2)==1
+        <span class="comment">% put ps into their array</span>
+        pts(round(j/2,0))=pt;
+        pns(round(j/2,0))=pn;
+    <span class="keyword">else</span>
+        <span class="comment">% Put annulus results into matrix</span>
+        S2(j/2,:)=[local_radius, a_s1, adash_s1, alpha, Cn_s1, Ct_s1,<span class="keyword">...</span>
+            tol_s1, i_s1,Vrel,Mt,Mn,pt,pn];
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+<span class="comment">% Blade/Tip Deflection</span>
+<span class="comment">% Following the method in Hansen Chpater 11</span>
+<span class="comment">% Note that t(angential) is y-axis</span>
+<span class="comment">%           n(ormal)     is z-axis</span>
+<span class="comment">% These notations are used interchangably</span>
+
+<span class="comment">% Pre-allocate arrays</span>
+Ty=zeros(1,N+1);
+Tz=zeros(1,N+1);
+My=zeros(1,N+1);
+Mz=zeros(1,N+1);
+
+<span class="keyword">for</span> p=N:-1:1
+    <span class="comment">% Calcualte y/z shear forces and moments at each node.</span>
+    <span class="comment">% Tip node N+1 left at zero.</span>
+    force_y_p=pts(p+1);
+    force_y_p1=pts(p);
+    force_z_p=pns(p+1);
+    force_z_p1=pns(p);
+    Ty(p)=Ty(p+1)+(1/2*(force_y_p+force_y_p1)*radius_delta);
+    Tz(p)=Tz(p+1)+(1/2*(force_z_p+force_z_p1)*radius_delta);
+    My(p)=My(1,p+1)-(radius_delta*Tz(p+1))-((force_z_p1/6)+<span class="keyword">...</span>
+          (force_z_p/3))*radius_delta^2;
+    Mz(p)=Mz(1,p+1)+(radius_delta*Ty(p+1))+((force_y_p1/6)+<span class="keyword">...</span>
+          (force_y_p/3))*radius_delta^2;
+<span class="keyword">end</span>
+
+
+<span class="comment">% Calculate the value of theta and chord at each node.</span>
+node_thetas=linspace(Theta0,Theta0+((TipRadius-RootRadius)*ThetaTwist),N+1);
+node_chords=linspace(c_mean_local+<span class="keyword">...</span>
+            ((RootRadius-((TipRadius-RootRadius)/2))*c_grad),<span class="keyword">...</span>
+            c_mean_local+((TipRadius-((TipRadius-RootRadius)/2))*c_grad),N+1);
+
+<span class="comment">% Calculate the moments relative to the principal axes</span>
+M1=My.*cos(node_thetas)-Mz.*sin(node_thetas);
+M2=My.*sin(node_thetas)+Mz.*cos(node_thetas);
+
+<span class="comment">% Calculate curvatures and make relative to principal axes</span>
+k1=M1./EIcalc(node_chords);
+k2=M2./EI2calc(node_chords);
+
+kz=-k1.*sin(node_thetas) + k2.*cos(node_thetas);
+ky=k1.*cos(node_thetas)+k2.*sin(node_thetas);
+
+<span class="comment">% Pre-allocate arrays for deflection values</span>
+deflection_angles_y=zeros(1,N+1);
+deflection_angles_z=zeros(1,N+1);
+deflection_distance_y=zeros(1,N+1);
+deflection_distance_z=zeros(1,N+1);
+
+<span class="keyword">for</span> q=1:N
+    <span class="comment">% Loop through nodes and calculate deflection as per Hansen Chapter 11</span>
+    <span class="comment">% deflection angle</span>
+    deflection_angles_y(q+1)=deflection_angles_y(1,q)+0.5*(ky(1,q+1)+<span class="keyword">...</span>
+                             ky(1,q))*radius_delta;
+    deflection_angles_z(q+1)=deflection_angles_z(1,q)+0.5*(kz(1,q+1)+<span class="keyword">...</span>
+                             kz(1,q))*radius_delta;
+    <span class="comment">% Deflection amount</span>
+    deflection_distance_y(q+1)=deflection_distance_y(1,q)+<span class="keyword">...</span>
+        deflection_angles_z(1,q)*radius_delta+<span class="keyword">...</span>
+        ((kz(q+1)/6)+(kz(q)/3))*radius_delta^2;
+    deflection_distance_z(q+1)=deflection_distance_z(1,q)+<span class="keyword">...</span>
+        deflection_angles_y(1,q)*radius_delta+<span class="keyword">...</span>
+        ((ky(q+1)/6)+(ky(q)/3))*radius_delta^2;
+<span class="keyword">end</span>
+
+<span class="comment">% Calculate maximum deflection in each axis.</span>
+def_max_y=deflection_distance_y(N+1);
+def_max_z=deflection_distance_z(N+1);
+
+<span class="comment">% Moments</span>
+Mtot_t=sum(S2(:,10)); <span class="comment">% Sum moments across the blade - Tangential</span>
+Mtot_n=sum(S2(:,11)); <span class="comment">% Sum moments across the blade - Normal</span>
+Power=Mtot_t*B*globaldata.w; <span class="comment">% Calculate power generated by blade.</span>
+
+<span class="comment">% Deprecated</span>
+Cp=Power/(0.5*1.225*(pi*(TipRadius^2-RootRadius^2))*V0^3); <span class="comment">% Calculate Cp</span>
+
+<span class="keyword">end</span>
+</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2018b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+function [Mtot_t, Mtot_n,S2,Power,def_max_y,def_max_z,deflection_distance_z] =...
+            WTSingleVelocity(V0, Theta0, ThetaTwist, c_grad, TipRadius,...
+            RootRadius, B,globaldata)
+        
+%S2: WHOLE ROTOR - loop WTInducedCalcs to find the values for all radii,
+%then integrate these to get the normal and tangential moment at the blade
+%root.
+
+% Set Up
+N=19; %set radius element count
+radius_delta=(TipRadius-RootRadius)/(N); %Increment in radius
+S2=zeros(N,13); % Pre-allocate empty matrix to hold key values
+
+% Convinience variables for mean chord and rotational speed
+c_mean_local=globaldata.c_mean;
+w_local=globaldata.w;
+
+% Pre-allocate empty arrays for nodal powers needed for deflection.
+pts=zeros(1,N+1); % Pys
+pns=zeros(1,N+1);% Pzs
+
+% Main Loop
+% Loop through all elements (for annulus calcs) and nodes (for deflection calcs)
+% Note the final node (j=2N+1) is ommitted as it is a boundary condition
+% set to power = 0.
+for j=1:(2*N)
+    
+    % Calculate local radius
+    local_radius=RootRadius+((j-1)*0.5*radius_delta);
+    % Calculate local chord value using chord gradient
+    local_chord=c_mean_local+((local_radius-((TipRadius-RootRadius)/2))*c_grad);
+    % Calcualte local theta angle of the blade
+    local_theta=Theta0+(local_radius*ThetaTwist);
+    
+    % Calculate local coefficients for the annuulus centre
+    [a_s1, adash_s1, alpha, Cn_s1, Ct_s1, Vrel, tol_s1, i_s1]=...
+        WTInducedCalcs(0.2,0.2,V0,w_local,local_radius,local_theta,...
+        local_chord,TipRadius,globaldata);
+    
+    
+    %Calculate each moment and power.
+    Mt=(0.5*1.225*local_chord*Ct_s1*Vrel^2)*radius_delta*local_radius;
+    Mn=(0.5*1.225*local_chord*Cn_s1*Vrel^2)*radius_delta*local_radius;
+    pt=Mt/(radius_delta*local_radius);
+    pn=Mn/(radius_delta*local_radius);
+    
+    % Alternate values are used for the main annulus calculation and
+    % The deflection calculations.
+    % Odd interations are nodes for deflection needing node power.
+    % Even interations are elements for annulus calcs
+    if mod(j,2)==1
+        % put ps into their array
+        pts(round(j/2,0))=pt;
+        pns(round(j/2,0))=pn;
+    else
+        % Put annulus results into matrix
+        S2(j/2,:)=[local_radius, a_s1, adash_s1, alpha, Cn_s1, Ct_s1,...
+            tol_s1, i_s1,Vrel,Mt,Mn,pt,pn];
+    end
+end
+
+% Blade/Tip Deflection
+% Following the method in Hansen Chpater 11
+% Note that t(angential) is y-axis
+%           n(ormal)     is z-axis
+% These notations are used interchangably
+
+% Pre-allocate arrays
+Ty=zeros(1,N+1);
+Tz=zeros(1,N+1);
+My=zeros(1,N+1);
+Mz=zeros(1,N+1);
+
+for p=N:-1:1
+    % Calcualte y/z shear forces and moments at each node.
+    % Tip node N+1 left at zero.
+    force_y_p=pts(p+1);
+    force_y_p1=pts(p);
+    force_z_p=pns(p+1);
+    force_z_p1=pns(p);
+    Ty(p)=Ty(p+1)+(1/2*(force_y_p+force_y_p1)*radius_delta);
+    Tz(p)=Tz(p+1)+(1/2*(force_z_p+force_z_p1)*radius_delta);
+    My(p)=My(1,p+1)-(radius_delta*Tz(p+1))-((force_z_p1/6)+...
+          (force_z_p/3))*radius_delta^2;
+    Mz(p)=Mz(1,p+1)+(radius_delta*Ty(p+1))+((force_y_p1/6)+...
+          (force_y_p/3))*radius_delta^2;
+end
+
+
+% Calculate the value of theta and chord at each node.
+node_thetas=linspace(Theta0,Theta0+((TipRadius-RootRadius)*ThetaTwist),N+1);
+node_chords=linspace(c_mean_local+...
+            ((RootRadius-((TipRadius-RootRadius)/2))*c_grad),...
+            c_mean_local+((TipRadius-((TipRadius-RootRadius)/2))*c_grad),N+1);
+
+% Calculate the moments relative to the principal axes
+M1=My.*cos(node_thetas)-Mz.*sin(node_thetas);
+M2=My.*sin(node_thetas)+Mz.*cos(node_thetas);
+
+% Calculate curvatures and make relative to principal axes
+k1=M1./EIcalc(node_chords);
+k2=M2./EI2calc(node_chords);
+
+kz=-k1.*sin(node_thetas) + k2.*cos(node_thetas);
+ky=k1.*cos(node_thetas)+k2.*sin(node_thetas);
+
+% Pre-allocate arrays for deflection values
+deflection_angles_y=zeros(1,N+1);
+deflection_angles_z=zeros(1,N+1);
+deflection_distance_y=zeros(1,N+1);
+deflection_distance_z=zeros(1,N+1);
+
+for q=1:N
+    % Loop through nodes and calculate deflection as per Hansen Chapter 11
+    % deflection angle
+    deflection_angles_y(q+1)=deflection_angles_y(1,q)+0.5*(ky(1,q+1)+...
+                             ky(1,q))*radius_delta;
+    deflection_angles_z(q+1)=deflection_angles_z(1,q)+0.5*(kz(1,q+1)+...
+                             kz(1,q))*radius_delta;
+    % Deflection amount
+    deflection_distance_y(q+1)=deflection_distance_y(1,q)+...
+        deflection_angles_z(1,q)*radius_delta+...
+        ((kz(q+1)/6)+(kz(q)/3))*radius_delta^2;
+    deflection_distance_z(q+1)=deflection_distance_z(1,q)+...
+        deflection_angles_y(1,q)*radius_delta+...
+        ((ky(q+1)/6)+(ky(q)/3))*radius_delta^2;
+end
+
+% Calculate maximum deflection in each axis.
+def_max_y=deflection_distance_y(N+1);
+def_max_z=deflection_distance_z(N+1);
+
+% Moments
+Mtot_t=sum(S2(:,10)); % Sum moments across the blade - Tangential
+Mtot_n=sum(S2(:,11)); % Sum moments across the blade - Normal
+Power=Mtot_t*B*globaldata.w; % Calculate power generated by blade.
+
+% Deprecated
+Cp=Power/(0.5*1.225*(pi*(TipRadius^2-RootRadius^2))*V0^3); % Calculate Cp
+
+end
+##### SOURCE END #####
+--></body></html>
