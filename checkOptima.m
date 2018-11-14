@@ -2,7 +2,8 @@ function [xdeg_co] = checkOptima(x,globaldata)
 %CHECKOPTIMA Produces graphs holding 2 params constant and varying the other.
 %   Helps show solution is optimal.
 
-
+globaldata.flags.overrideLimits=false;
+globaldata.flags.tiploss=true;
 %% Changing Theta 0
 N=400; % Mesh resolution
 variableSpace=linspace(deg2rad(2),deg2rad(18),N); % Create theta values
