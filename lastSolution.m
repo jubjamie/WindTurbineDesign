@@ -269,4 +269,4 @@ set(leg, 'FontSize', 11);
 title('Flow Angle Alpha Across the Blade at Different Wind Speeds');
 xlabel('Blade Radius (m)');
 ylabel('Alpha Angle (°)');
-saveas(f14,'graphs/alphaStalling.png');
+saveas(f15,'graphs/alphaStalling.png');
