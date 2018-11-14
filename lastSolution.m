@@ -83,7 +83,8 @@ globaldata.flags.overrideLimits=true;
 globaldata.flags.overrideLimits=false;
 
 actual_powers_os=S3_os(:,2);
-[v0s,actual_powers_os]=quickInterp(S3_os(:,1),actual_powers_os,'start',globaldata.Vmin);
+[v0s,actual_powers_os]=quickInterp(S3_os(:,1),actual_powers_os,...
+                                            'start',globaldata.Vmin);
 [v0s,actual_powers_os]=quickInterp(v0s,actual_powers_os,'end',globaldata.Vmax);
 plot(v0s,(actual_powers_os./1e6),'r--'); % Plot power curve with no limits
 
@@ -115,7 +116,8 @@ f14=figure(14);
 % Change settings to create version of data overriding shutdown limits
 
 actual_powers_os=S3_os(:,2);
-[v0s,actual_powers_os]=quickInterp(S3_os(:,1),actual_powers_os,'start',globaldata.Vmin);
+[v0s,actual_powers_os]=quickInterp(S3_os(:,1),actual_powers_os,'start',...
+                                                         globaldata.Vmin);
 [v0s,actual_powers_os]=quickInterp(v0s,actual_powers_os,'end',globaldata.Vmax);
 % Plot power coeff with no limits
 plot(v0s,(actual_powers_os./...
@@ -128,7 +130,9 @@ ideal_powers=S3(:,5)./(S3(:,3).*8760);
 actual_powers=S3(:,2);
 [v0s,actual_powers]=quickInterp(S3(:,1),actual_powers,'start',globaldata.Vmin);
 [v0s,actual_powers]=quickInterp(v0s,actual_powers,'end',globaldata.Vmax);
-plot(v0s,(actual_powers./(0.5*1.225*(pi*(globaldata.Rmax^2-globaldata.Rmin^2)).*(v0s).^3)),'r-'); % Plot actual power curve
+
+plot(v0s,(actual_powers./(0.5*1.225*(pi*(globaldata.Rmax^2-globaldata.Rmin^2))...
+    .*(v0s).^3)),'r-'); % Plot actual power curve
 
 plot([v0s(1),v0s(end)],[(16/27),(16/27)],'b-'); % Plot ideal power curve
 
@@ -225,8 +229,14 @@ annotation('textarrow',[0.2,0.4],[0.7,0.7]);
 annotation('textarrow',[0.2,0.4],[0.5,0.5]);
 annotation('textarrow',[0.2,0.4],[0.8,0.8]);
 annotation('textarrow',[0.2,0.4],[0.4,0.4]);
-annotation('textbox',[0.2 0.44 0.2,0.2],'String',['Wind Speed = ' num2str(highestSpeed) ' m/s'],'Interpreter','Latex','FitBoxToText','on','HorizontalAlignment','center','FontSize',12,'LineStyle','none');
-annotation('textbox',[0.65 0.34 0.2,0.2],'String',['Max Deflection' newline '=' newline  num2str(maxDeflect) ' m'],'Interpreter','Latex','FitBoxToText','on','HorizontalAlignment','center','FontSize',14);
+annotation('textbox',[0.2 0.44 0.2,0.2],'String',...
+        ['Wind Speed = ' num2str(highestSpeed) ' m/s'],...
+        'Interpreter','Latex','FitBoxToText','on','HorizontalAlignment',...
+        'center','FontSize',12,'LineStyle','none');
+annotation('textbox',[0.65 0.34 0.2,0.2],'String',...
+        ['Max Deflection' newline '=' newline  num2str(maxDeflect) ' m'],...
+        'Interpreter','Latex','FitBoxToText','on','HorizontalAlignment',...
+        'center','FontSize',14);
 set(gcf,'position',[800,200,550,600]);
 % Save
 saveas(f12,'graphs/maxDeflection.png');
