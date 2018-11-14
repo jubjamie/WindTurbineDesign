@@ -54,7 +54,8 @@ for j=1:(2*N)
         pns(round(j/2,0))=pn;
     else
         % Put annulus results into matrix
-        S2(j/2,:)=[local_radius, a_s1, adash_s1, alpha, Cn_s1, Ct_s1, tol_s1, i_s1,Vrel,Mt,Mn,pt,pn];
+        S2(j/2,:)=[local_radius, a_s1, adash_s1, alpha, Cn_s1, Ct_s1,...
+            tol_s1, i_s1,Vrel,Mt,Mn,pt,pn];
     end
 end
 
