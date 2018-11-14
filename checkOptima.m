@@ -4,7 +4,7 @@ function [xdeg_co] = checkOptima(x,globaldata)
 
 
 %% Changing Theta 0
-N=200; % Mesh resolution
+N=400; % Mesh resolution
 variableSpace=linspace(deg2rad(2),deg2rad(18),N); % Create theta values
 aepHold=zeros(1,N); % Pre-allocate AEP holding array
 progressbar('Finding AEPs - Changing Theta'); % Init progres bar
@@ -37,7 +37,7 @@ saveas(f7,'graphs/optima_theta.png');
 
 
 %% Changing Theta twist
-N=150; % Mesh resolution
+N=400; % Mesh resolution
 variableSpace=linspace(deg2rad(-1.5),deg2rad(0.5),N); % Create theta_tw values
 aepHold=zeros(1,N); % pre-allocate AEP holding array
 progressbar('Finding AEPs - Changing Theta Twist'); % Init progress bar
@@ -65,7 +65,7 @@ grid on;
 saveas(f8,'graphs/optima_theta_twist.png');
 
 %% Changing c_grad
-N=150; % Mesh resolution
+N=400; % Mesh resolution
 variableSpace=linspace(-0.1,0.1,N); % Create chord gradient values.
 aepHold=zeros(1,N); % Pre-allocate aep holding array
 progressbar('Finding AEPs - Changing Chord Gradient'); % Init progress bar.
