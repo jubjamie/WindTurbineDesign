@@ -162,7 +162,7 @@ title('Tip Losses Effect at 15m/s');
 xlabel('Blade Radius (m)');
 ylabel('Power (W)');
 legend({'With Tip Losses', 'Without Tip Losses'},...
-    'Location','Northeast','Interpreter','latex','FontSize',11,'Location',...
+    'Interpreter','latex','FontSize',11,'Location',...
     'Northwest');
 saveas(f10,'graphs/bladeTipLoss.png');
 
@@ -230,3 +230,25 @@ set(gcf,'position',[800,200,550,600]);
 saveas(f12,'graphs/maxDeflection.png');
 
 
+%% Plot Mt at different Velocities
+f14=figure(14);
+clf(14);
+globaldata.flags.overridelimits=true;
+globaldata.flags.tiploss=false;
+vc=9;
+vspace=linspace(5,25,vc);
+MtHold=zeros(20,vc);
+hold on;
+grid on;
+for i=1:vc
+    [~,~,S2_ol,~,~,~,~]=WTSingleVelocity(vspace(i), x(1), x(2), x(3),...
+    globaldata.Rmax,globaldata.Rmin, globaldata.B,globaldata);
+plot(S2_ol(:,1),(S2_ol(:,10)./1e3),'DisplayName',[num2str(vspace(i)) ' m/s']);
+end
+leg=legend('Location', 'Northwest');
+set(leg, 'Interpreter', 'Latex');
+set(leg, 'FontSize', 11);
+title('Tangential Moments Along the Blade at Different Wind Speeds');
+xlabel('Blade Radius (m)');
+ylabel('Tangential Moment (kNm)');
+saveas(f14,'graphs/momentStalling.png');
