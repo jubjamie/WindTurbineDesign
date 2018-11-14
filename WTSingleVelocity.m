@@ -33,7 +33,7 @@ for j=1:(2*N)
     local_theta=Theta0+(local_radius*ThetaTwist);
     
     % Calculate local coefficients for the annuulus centre
-    [a_s1, adash_s1, phi_s1, Cn_s1, Ct_s1, Vrel, tol_s1, i_s1]=...
+    [a_s1, adash_s1, alpha, Cn_s1, Ct_s1, Vrel, tol_s1, i_s1]=...
         WTInducedCalcs(0.2,0.2,V0,w_local,local_radius,local_theta,...
         local_chord,TipRadius,globaldata);
     
@@ -54,7 +54,7 @@ for j=1:(2*N)
         pns(round(j/2,0))=pn;
     else
         % Put annulus results into matrix
-        S2(j/2,:)=[local_radius, a_s1, adash_s1, phi_s1, Cn_s1, Ct_s1, tol_s1, i_s1,Vrel,Mt,Mn,pt,pn];
+        S2(j/2,:)=[local_radius, a_s1, adash_s1, alpha, Cn_s1, Ct_s1, tol_s1, i_s1,Vrel,Mt,Mn,pt,pn];
     end
 end
 

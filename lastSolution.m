@@ -2,6 +2,8 @@
 % This script is used to compile all the required graphs for the last
 % solution. It also generates the status images for Github README.
 close all % Close all existing figures to avoid clogging up desktop.
+globaldata.flags.tiploss=true; % Set flags to default
+globaldata.flags.overrideLimits=false;
 
 %% Get S3 Data by running blade once more
 [diff, AEP, S3] = WTVelocityRange(x, globaldata.A, globaldata.k,...
@@ -143,7 +145,7 @@ saveas(f14,'graphs/powerBetzCurvesCoeff.png');
 % Get more indepth blade data at 15 m/s
 [~, ~,S2,~,~,~]=WTSingleVelocity(15, x(1), x(2), x(3),...
     globaldata.Rmax,globaldata.Rmin, globaldata.B,globaldata);
-statustablematrix(S2,{'r', 'a', 'adash', 'phi', 'Cn', 'Ct', 'tol',...
+statustablematrix(S2,{'r', 'a', 'adash', 'alpha', 'Cn', 'Ct', 'tol',...
     'i','Vrel','Mt','Mn','Pt','Pn'},'status/optSol_S2.png',...
     'Rotor Profile 15m/s','figure',1);
 Power=S2(:,10)*globaldata.B*globaldata.w;
@@ -230,21 +232,28 @@ set(gcf,'position',[800,200,550,600]);
 saveas(f12,'graphs/maxDeflection.png');
 
 
-%% Plot Mt at different Velocities
-f14=figure(14);
-clf(14);
+%% Plot Mt and Alpha at different Velocities
+f14=figure(14); % Moment Graph
+f15=figure(15); % Alpha Graph
+clf(14);clf(15); % Clear graphs first.
 globaldata.flags.overridelimits=true;
 globaldata.flags.tiploss=false;
-vc=9;
+vc=5;
 vspace=linspace(5,25,vc);
 MtHold=zeros(20,vc);
-hold on;
-grid on;
 for i=1:vc
     [~,~,S2_ol,~,~,~,~]=WTSingleVelocity(vspace(i), x(1), x(2), x(3),...
     globaldata.Rmax,globaldata.Rmin, globaldata.B,globaldata);
+figure(14)
+hold on;
+grid on;
 plot(S2_ol(:,1),(S2_ol(:,10)./1e3),'DisplayName',[num2str(vspace(i)) ' m/s']);
+figure(15)
+hold on;
+grid on;
+plot(S2_ol(:,1),(rad2deg(S2_ol(:,4))),'DisplayName',[num2str(vspace(i)) ' m/s']);
 end
+figure(14)
 leg=legend('Location', 'Northwest');
 set(leg, 'Interpreter', 'Latex');
 set(leg, 'FontSize', 11);
@@ -252,3 +261,12 @@ title('Tangential Moments Along the Blade at Different Wind Speeds');
 xlabel('Blade Radius (m)');
 ylabel('Tangential Moment (kNm)');
 saveas(f14,'graphs/momentStalling.png');
+
+figure(15)
+leg=legend('Location', 'Northeast');
+set(leg, 'Interpreter', 'Latex');
+set(leg, 'FontSize', 11);
+title('Flow Angle Alpha Across the Blade at Different Wind Speeds');
+xlabel('Blade Radius (m)');
+ylabel('Alpha Angle (°)');
+saveas(f14,'graphs/alphaStalling.png');
