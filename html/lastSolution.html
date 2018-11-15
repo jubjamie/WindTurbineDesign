@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>lastSolution</title><meta name="generator" content="MATLAB 9.5"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2018-11-14"><meta name="DC.source" content="lastSolution.m"><style type="text/css">
+      --><title>lastSolution</title><meta name="generator" content="MATLAB 9.5"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2018-11-15"><meta name="DC.source" content="lastSolution.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -92,7 +92,7 @@ hold <span class="string">on</span>;
 plot(v0s,(powers./1e6),<span class="string">'-r'</span>); <span class="comment">% Plot Ideal AEP profile</span>
 grid
 xlabel(<span class="string">'Wind Speed (m/s)'</span>);
-ylabel(<span class="string">'Power x Probability (MW)'</span>);
+ylabel(<span class="string">'Power x Probability (MWhr/yr)'</span>);
 legend({<span class="string">'Found Solution'</span>, <span class="string">'Ideal AEP Solution'</span>},<span class="keyword">...</span>
     <span class="string">'Location'</span>,<span class="string">'Northeast'</span>,<span class="string">'Interpreter'</span>,<span class="string">'latex'</span>,<span class="string">'FontSize'</span>,12);
 set(gcf,<span class="string">'position'</span>,[200,200,650,450])
@@ -117,7 +117,8 @@ globaldata.flags.overrideLimits=true;
 [v0s,powers]=quickInterp(S3_ntl(:,1),S3_ntl(:,4),<span class="string">'start'</span>,globaldata.Vmin);
 [v0s,powers]=quickInterp(v0s,powers,<span class="string">'end'</span>,globaldata.Vmax);
 
-plot(v0s,(powers./1e6),<span class="string">'g--'</span>); <span class="comment">% Plot blade without tip losses.</span>
+<span class="comment">% Plot blade without tip losses.</span>
+plot(v0s,(powers./1e6),<span class="string">'LineStyle'</span>,<span class="string">'--'</span>,<span class="string">'Color'</span>,[0.09,0.56,0.16]);
 legend({<span class="string">'Found Solution'</span>, <span class="string">'Ideal AEP Solution'</span>,<span class="string">'Tip Losses Neglected'</span>},<span class="keyword">...</span>
     <span class="string">'Location'</span>,<span class="string">'Northeast'</span>,<span class="string">'Interpreter'</span>,<span class="string">'latex'</span>,<span class="string">'FontSize'</span>,12);
 
@@ -257,23 +258,23 @@ radius_space=linspace(globaldata.Rmin,globaldata.Rmax,<span class="keyword">...<
 <span class="comment">% Plot the blade profile mirrored. Not technically correct as 3 blade design</span>
 <span class="comment">% does not have symmetric design in this orientation</span>
 plot(horzcat(flip(abs(defz_array)),abs(defz_array)),<span class="keyword">...</span>
-    horzcat(radius_space,radius_space+globaldata.Rmax),<span class="string">'r-'</span>,<span class="string">'LineWidth'</span>,2);
+    horzcat(radius_space,radius_space+globaldata.Rmax)-20,<span class="string">'r-'</span>,<span class="string">'LineWidth'</span>,2);
 
 hold <span class="string">on</span>;
 grid;
 
 <span class="comment">% Plot on to scale turbine tower etc.</span>
-plot([0,3.5],[globaldata.Rmax,globaldata.Rmax],<span class="string">'LineWidth'</span>,3,<span class="string">'Color'</span>,<span class="string">'b'</span>,<span class="keyword">...</span>
+plot([0,3.5],[0,0],<span class="string">'LineWidth'</span>,3,<span class="string">'Color'</span>,<span class="string">'b'</span>,<span class="keyword">...</span>
     <span class="string">'LineStyle'</span>,<span class="string">'--'</span>);
-plot([3.2,3.2],[globaldata.Rmax+0.5,globaldata.Rmax-35],<span class="string">'LineWidth'</span>,1,<span class="string">'Color'</span>,<span class="keyword">...</span>
+plot([3.2,3.2],[0.5,-35],<span class="string">'LineWidth'</span>,1,<span class="string">'Color'</span>,<span class="keyword">...</span>
     <span class="string">'b'</span>,<span class="string">'LineStyle'</span>,<span class="string">'--'</span>);
 <span class="comment">% Add graph decoration</span>
 title(<span class="string">'Blade Tip Deflection Profile'</span>);
 xlabel(<span class="string">'Deflection (m)'</span>);
 ylabel(<span class="string">'Blade (m)'</span>);
 xlim([-15, 15]);
-ylim([globaldata.Rmax-35, 2*globaldata.Rmax+3]);
-set(gca,<span class="string">'YTickLabel'</span>,[]);
+ylim([-35, globaldata.Rmax+3]);
+
 annotation(<span class="string">'textarrow'</span>,[0.2,0.4],[0.7,0.7]);
 annotation(<span class="string">'textarrow'</span>,[0.2,0.4],[0.5,0.5]);
 annotation(<span class="string">'textarrow'</span>,[0.2,0.4],[0.8,0.8]);
@@ -364,7 +365,7 @@ hold on;
 plot(v0s,(powers./1e6),'-r'); % Plot Ideal AEP profile
 grid
 xlabel('Wind Speed (m/s)');
-ylabel('Power x Probability (MW)');
+ylabel('Power x Probability (MWhr/yr)');
 legend({'Found Solution', 'Ideal AEP Solution'},...
     'Location','Northeast','Interpreter','latex','FontSize',12);
 set(gcf,'position',[200,200,650,450])
@@ -389,7 +390,8 @@ globaldata.flags.overrideLimits=true;
 [v0s,powers]=quickInterp(S3_ntl(:,1),S3_ntl(:,4),'start',globaldata.Vmin);
 [v0s,powers]=quickInterp(v0s,powers,'end',globaldata.Vmax);
 
-plot(v0s,(powers./1e6),'gREPLACE_WITH_DASH_DASH'); % Plot blade without tip losses.
+% Plot blade without tip losses.
+plot(v0s,(powers./1e6),'LineStyle','REPLACE_WITH_DASH_DASH','Color',[0.09,0.56,0.16]);
 legend({'Found Solution', 'Ideal AEP Solution','Tip Losses Neglected'},...
     'Location','Northeast','Interpreter','latex','FontSize',12);
 
@@ -541,23 +543,23 @@ radius_space=linspace(globaldata.Rmin,globaldata.Rmax,...
 % Plot the blade profile mirrored. Not technically correct as 3 blade design
 % does not have symmetric design in this orientation
 plot(horzcat(flip(abs(defz_array)),abs(defz_array)),...
-    horzcat(radius_space,radius_space+globaldata.Rmax),'r-','LineWidth',2);
+    horzcat(radius_space,radius_space+globaldata.Rmax)-20,'r-','LineWidth',2);
 
 hold on;
 grid;
 
 % Plot on to scale turbine tower etc.
-plot([0,3.5],[globaldata.Rmax,globaldata.Rmax],'LineWidth',3,'Color','b',...
+plot([0,3.5],[0,0],'LineWidth',3,'Color','b',...
     'LineStyle','REPLACE_WITH_DASH_DASH');
-plot([3.2,3.2],[globaldata.Rmax+0.5,globaldata.Rmax-35],'LineWidth',1,'Color',...
+plot([3.2,3.2],[0.5,-35],'LineWidth',1,'Color',...
     'b','LineStyle','REPLACE_WITH_DASH_DASH');
 % Add graph decoration
 title('Blade Tip Deflection Profile');
 xlabel('Deflection (m)');
 ylabel('Blade (m)');
 xlim([-15, 15]);
-ylim([globaldata.Rmax-35, 2*globaldata.Rmax+3]);
-set(gca,'YTickLabel',[]);
+ylim([-35, globaldata.Rmax+3]);
+
 annotation('textarrow',[0.2,0.4],[0.7,0.7]);
 annotation('textarrow',[0.2,0.4],[0.5,0.5]);
 annotation('textarrow',[0.2,0.4],[0.8,0.8]);

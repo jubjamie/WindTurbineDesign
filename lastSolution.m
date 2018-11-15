@@ -56,7 +56,8 @@ globaldata.flags.overrideLimits=true;
 [v0s,powers]=quickInterp(S3_ntl(:,1),S3_ntl(:,4),'start',globaldata.Vmin);
 [v0s,powers]=quickInterp(v0s,powers,'end',globaldata.Vmax);
 
-plot(v0s,(powers./1e6),'g--'); % Plot blade without tip losses.
+% Plot blade without tip losses.
+plot(v0s,(powers./1e6),'LineStyle','--','Color',[0.09,0.56,0.16]);
 legend({'Found Solution', 'Ideal AEP Solution','Tip Losses Neglected'},...
     'Location','Northeast','Interpreter','latex','FontSize',12);
 
@@ -208,23 +209,23 @@ radius_space=linspace(globaldata.Rmin,globaldata.Rmax,...
 % Plot the blade profile mirrored. Not technically correct as 3 blade design
 % does not have symmetric design in this orientation
 plot(horzcat(flip(abs(defz_array)),abs(defz_array)),...
-    horzcat(radius_space,radius_space+globaldata.Rmax),'r-','LineWidth',2);
+    horzcat(radius_space,radius_space+globaldata.Rmax)-20,'r-','LineWidth',2);
 
 hold on;
 grid;
 
 % Plot on to scale turbine tower etc.
-plot([0,3.5],[globaldata.Rmax,globaldata.Rmax],'LineWidth',3,'Color','b',...
+plot([0,3.5],[0,0],'LineWidth',3,'Color','b',...
     'LineStyle','--');
-plot([3.2,3.2],[globaldata.Rmax+0.5,globaldata.Rmax-35],'LineWidth',1,'Color',...
+plot([3.2,3.2],[0.5,-35],'LineWidth',1,'Color',...
     'b','LineStyle','--');
 % Add graph decoration
 title('Blade Tip Deflection Profile');
 xlabel('Deflection (m)');
 ylabel('Blade (m)');
 xlim([-15, 15]);
-ylim([globaldata.Rmax-35, 2*globaldata.Rmax+3]);
-set(gca,'YTickLabel',[]);
+ylim([-35, globaldata.Rmax+3]);
+
 annotation('textarrow',[0.2,0.4],[0.7,0.7]);
 annotation('textarrow',[0.2,0.4],[0.5,0.5]);
 annotation('textarrow',[0.2,0.4],[0.8,0.8]);
