@@ -35,4 +35,4 @@ Testing results for the Section 3 Looped Induced Calcs AEP case validation test.
 
 
 ## Copyright
-This work is provided with no license and copyright is exclusivley held by &copy; Jamie Cooke. This work is provided for strictly educational purposes and may not be reproduced. If you arte interested in learning more I am happy to discuss.
+This work is provided with no license and copyright is exclusivley held by &copy; Jamie Cooke. This work is provided for strictly educational purposes and may not be reproduced. If you are interested in learning more I am happy to discuss.
