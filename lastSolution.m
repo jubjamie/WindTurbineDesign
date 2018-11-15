@@ -31,7 +31,7 @@ hold on;
 plot(v0s,(powers./1e6),'-r'); % Plot Ideal AEP profile
 grid
 xlabel('Wind Speed (m/s)');
-ylabel('Power x Probability (MW)');
+ylabel('Power x Probability (MWhr/yr)');
 legend({'Found Solution', 'Ideal AEP Solution'},...
     'Location','Northeast','Interpreter','latex','FontSize',12);
 set(gcf,'position',[200,200,650,450])
